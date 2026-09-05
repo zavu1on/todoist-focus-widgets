@@ -10,7 +10,8 @@
 | **Expo** + **Expo Router** | Скаффолд приложения, файловая маршрутизация (`src/app/`), нативные модули (`expo-sqlite`, `expo-secure-store`) |
 | **React Native** | UI-слой приложения и виджетов |
 | **react-native-android-widget** | Рендеринг Android-виджетов (**Pin**, **List**) React-компонентами (`FlexWidget`/`ListWidget`) |
-| **TanStack Query** | Серверное состояние — кэш запросов к Todoist REST API |
+| **[Todoist SDK](https://www.npmjs.com/package/@doist/todoist-sdk)** (`@doist/todoist-sdk`) | Типизированный клиент Todoist API |
+| **TanStack Query** | Серверное состояние — кэш запросов к Todoist API через Todoist SDK |
 | **React Hook Form** + **Zod** | Формы (авторизация, конфигурация виджета) и их валидация |
 | **day.js** | Форматирование и сравнение дат (due-даты задач) |
 | **expo-sqlite** | Локальное хранение конфигурации фильтров виджетов |
@@ -38,7 +39,7 @@
 
 Внутри слайса — сегменты `ui/` (компоненты), `model/` (состояние, бизнес-логика, Zod-схемы) и `api/` (обёртки над источниками данных и хуки TanStack Query поверх них).
 
-- **Todoist REST API** — через клиент `shared/api/todoistClient.ts` (единая точка `fetch`-конфигурации: базовый URL, токен, обработка ошибок авторизации)
+- **Todoist API** — через клиент `shared/api/todoistClient.ts` (единая точка конфигурации `@doist/todoist-sdk`: токен, обработка ошибок авторизации)
 - **expo-sqlite** — через репозиторий `shared/api/widgetsDb.ts` (конфигурация фильтров виджетов)
 
 Компонент из `ui/` не обращается ни к `fetch`, ни к `expo-sqlite` напрямую — только через хук/функцию из `api/` своего слайса. Другие стандартные FSD-сегменты (`lib/`, `config/`) добавляются по тому же принципу — когда для них появляется код, а не заранее «про запас».
@@ -74,7 +75,7 @@ export { CreateWidgetForm } from "./ui/CreateWidgetForm";
   ```ts
   // api/fetchTasksByFilter.ts
   export const fetchTasksByFilter = (filterQuery: string): Promise<Task[]> =>
-    todoistClient.get("/tasks/filter", { params: { query: filterQuery } });
+    todoistClient.getTasksByFilter({ query: filterQuery });
 
   // api/useWidgetsQuery.ts
   export const useWidgetsQuery = () => useQuery({ queryKey: widgetsListQueryKey, queryFn: getAllWidgets });
@@ -111,7 +112,7 @@ export { CreateWidgetForm } from "./ui/CreateWidgetForm";
 
 ## TanStack Query — лучшие практики
 
-- Запрос к Todoist REST API или к `expo-sqlite` — функция в `api/` слайса, оборачивается в `useQuery`/`useMutation` там же (не в компоненте `ui/`); `useState` остаётся для чисто локального UI-состояния (открыт ли модал, выбранный таб), не для серверных/персистентных данных
+- Запрос к Todoist API (через Todoist SDK) или к `expo-sqlite` — функция в `api/` слайса, оборачивается в `useQuery`/`useMutation` там же (не в компоненте `ui/`); `useState` остаётся для чисто локального UI-состояния (открыт ли модал, выбранный таб), не для серверных/персистентных данных
 - **Query-ключи — иерархические массивы**, а не плоские строки: `["widgets", "list"]`, `["tasks", "list", { widgetId }]`. Порядок элементов массива значим (разные последовательности — разные кэши), порядок полей объекта — нет
 - Query key, которым делятся несколько слайсов, заводится в `entities/` и импортируется оттуда — не дублируется:
   ```ts
@@ -211,7 +212,7 @@ export { CreateWidgetForm } from "./ui/CreateWidgetForm";
 - Тест — `*.spec.tsx` (`*.spec.ts` для хелперов/хуков без JSX), лежит рядом с тестируемым файлом
 - Рендеринг и запросы к дереву — `render`, `fireEvent`, `waitFor`, `screen` из `@testing-library/react-native`
 - Запросы к дереву — через доступные пользователю признаки (`getByRole`, `getByText`, `getByLabelText`), не через `testID`, кроме случаев, где у элемента нет доступной пользователю роли или текста
-- Todoist REST API и `expo-sqlite` в тестах мокаются на уровне функций `api/`-сегмента, а не на уровне `fetch`/нативного модуля
+- Todoist SDK и `expo-sqlite` в тестах мокаются на уровне функций `api/`-сегмента, а не на уровне `fetch`/нативного модуля
 
 
 ## SDLC

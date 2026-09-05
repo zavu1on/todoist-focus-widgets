@@ -17,7 +17,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Expo** + **React Router** (Expo Router, файловая маршрутизация в `src/app/`) — см. [`AGENTS.md`](AGENTS.md) за правилами работы с версией SDK
 - **React Native**
 - **React Native Android Widget** ([`react-native-android-widget`](https://www.npmjs.com/package/react-native-android-widget)) — рендеринг Android-виджетов (`Pin`, `List`) React-компонентами через `FlexWidget`/`ListWidget`
-- **TanStack Query** — серверное состояние и кэш запросов к Todoist API
+- **[Todoist SDK](https://www.npmjs.com/package/@doist/todoist-sdk)** (`@doist/todoist-sdk`) — типизированный клиент Todoist API
+- **TanStack Query** — серверное состояние и кэш запросов к Todoist API через Todoist SDK
 - Локальное хранение конфигурации фильтров виджетов — SQLite (`expo-sqlite`)
 - Хранение Todoist Access Token — `expo-secure-store`
 
@@ -35,6 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |---|---|---|
 | [`git-commit`](.claude/skills/git-commit/SKILL.md) | самописный | Формирует conventional commit message по staged changes, диалогу сессии и переданному аргументу, коммитит после подтверждения |
 | [`feature`](.claude/skills/feature/SKILL.md) | самописный | Принимает описание задачи, подгружает [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md), разбивает задачу на пункты плана и реализует их по очереди с прогоном lint/typecheck/test, останавливаясь на ревью без коммита |
+| [`accept-adr`](.claude/skills/accept-adr/SKILL.md) | самописный | Приводит ADR-файл из `docs/decisions/` к шаблону и проводит строгое ревью содержимого, согласованности с другими решениями и соответствия критериям ADR |
 
 ### Слэш-команды
 
@@ -42,6 +44,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |---|---|
 | `/git-commit [аргумент]` | вызывает скилл `git-commit` |
 | `/feature <описание задачи>` | вызывает скилл `feature` |
+| `/accept-adr <путь к файлу>` | вызывает скилл `accept-adr` |
 
 ### Правило актуализации
 
