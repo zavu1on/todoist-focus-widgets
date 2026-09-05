@@ -14,6 +14,8 @@
 docs/
 ├── README.md             — навигационный хаб (этот файл)
 ├── SPECIFICATION.md      — техническое задание: авторизация по токену Todoist, экран списка виджетов, виды виджетов (Pin, List), хранение конфигурации фильтров, создание/редактирование/удаление виджетов, обновление данных, ссылка на дизайн
+├── TODOIST_SYNC_API.md   — ресёрч Todoist Sync API: sync_token, resource_types, commands, доступ через @doist/todoist-sdk, применение для обновления данных виджетов
+├── REACT_NATIVE_ANDROID_WIDGET.md — ресёрч react-native-android-widget: архитектура рендера, регистрация провайдера, task handler и события жизненного цикла, обновление без пересоздания, клики, ограничения
 ├── CODE_STYLE_GUIDE.md   — руководство по архитектуре (FSD) и оформлению кода: технологический стек, naming, роутинг Expo Router, лучшие практики TanStack Query и React Hook Form + Zod, SDLC
 └── decisions/            — ADR (Architecture Decision Records)
     ├── README.md         — паттерн, процесс и шаблон ADR
