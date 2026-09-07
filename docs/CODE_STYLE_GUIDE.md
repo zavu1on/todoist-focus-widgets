@@ -39,10 +39,10 @@
 
 Внутри слайса — сегменты `ui/` (компоненты), `model/` (состояние, бизнес-логика, Zod-схемы) и `api/` (обёртки над источниками данных и хуки TanStack Query поверх них).
 
-- **Todoist API** — через клиент `shared/api/todoistClient.ts` (единая точка конфигурации `@doist/todoist-sdk`: токен, обработка ошибок авторизации)
-- **expo-sqlite** — через репозиторий `shared/api/widgetsDb.ts` (конфигурация фильтров виджетов)
+- **Todoist API** — напрямую через `@doist/todoist-sdk` (`TodoistApi`, метод `sync()` для Todoist Sync API — см. [`TODOIST_SYNC_API.md`](TODOIST_SYNC_API.md)), без собственной обёртки поверх SDK
+- **expo-sqlite** — напрямую через `openDatabaseAsync` и методы `SQLiteDatabase` (конфигурация фильтров виджетов), без собственного репозитория поверх модуля
 
-Компонент из `ui/` не обращается ни к `fetch`, ни к `expo-sqlite` напрямую — только через хук/функцию из `api/` своего слайса. Другие стандартные FSD-сегменты (`lib/`, `config/`) добавляются по тому же принципу — когда для них появляется код, а не заранее «про запас».
+Компонент из `ui/` не обращается ни к `fetch`, ни к `@doist/todoist-sdk`, ни к `expo-sqlite` напрямую — только через хук/функцию из `api/` своего слайса. Другие стандартные FSD-сегменты (`lib/`, `config/`) добавляются по тому же принципу — когда для них появляется код, а не заранее «про запас».
 
 Наружу слайс отдаёт **публичный API** — barrel-файл `index.ts`, реэкспортирующий только то, что нужно снаружи:
 
@@ -78,11 +78,17 @@ export { SessionProvider, useSession } from "./SessionContext";
   ```
 - Избегай inline-типов: максимум 2 поля для inline-типа, если больше — выноси в отдельный тип
 - Экспорты — именованные (`export const X`), не `default`; наружу слайса — через `index.ts`
-- `api/*.ts` — функции, обращающиеся к `todoistClient`/`widgetsDb`, и хуки TanStack Query/Mutation, построенные поверх этих вызовов (`useWidgetsQuery`, `useCreateWidgetMutation`). **Один файл — одна функция/хук, имя файла = имя экспорта**, а не общий `widgets.ts`/`tasks.ts` на весь сегмент:
+- `api/*.ts` — функции, обращающиеся к `@doist/todoist-sdk`/`expo-sqlite`, и хуки TanStack Query/Mutation, построенные поверх этих вызовов (`useWidgetsQuery`, `useCreateWidgetMutation`). **Один файл — одна функция/хук, имя файла = имя экспорта**, а не общий `widgets.ts`/`tasks.ts` на весь сегмент:
   ```ts
   // api/fetchTasksByFilter.ts
-  export const fetchTasksByFilter = (filterQuery: string): Promise<Task[]> =>
-    todoistClient.getTasksByFilter({ query: filterQuery });
+  export const fetchTasksByFilter = (accessToken: string, filterQuery: string): Promise<Task[]> =>
+    new TodoistApi(accessToken).getTasksByFilter({ query: filterQuery });
+
+  // api/getAllWidgets.ts
+  export const getAllWidgets = async (): Promise<Widget[]> => {
+    const db = await openDatabaseAsync("widgets.db");
+    return db.getAllAsync<Widget>("SELECT * FROM widgets");
+  };
 
   // api/useWidgetsQuery.ts
   export const useWidgetsQuery = () => useQuery({ queryKey: widgetsListQueryKey, queryFn: getAllWidgets });
@@ -189,7 +195,7 @@ export { SessionProvider, useSession } from "./SessionContext";
 
 1. Определи слой по смыслу: бизнес-сущность → `entities`, одно пользовательское действие → `features`, крупный самостоятельный блок из нескольких фич → `widgets`, экран под route → `pages`
 2. Заведи слайс `<layer>/<name>/` с сегментами `ui/`, `model/` и `api/` — только теми, для которых реально есть код
-3. `api/` — обёртки над `todoistClient`/`expo-sqlite` и хуки TanStack Query/Mutation поверх них; `model/` — Zod-схемы, локальное состояние, вычисления
+3. `api/` — функции поверх `@doist/todoist-sdk`/`expo-sqlite` и хуки TanStack Query/Mutation над ними; `model/` — Zod-схемы, локальное состояние, вычисления
 4. `ui/` — компоненты, один на файл, `FC`, декомпозиция до отдельной логической/визуальной единицы. **Каждый самостоятельный компонент — в отдельный файл**: если внутри JSX выделяется кусок разметки со своей логической ответственностью (карточка в списке, строка формы, элемент внутри `renderItem`), он выносится в собственный `PascalCase.tsx` рядом, а не остаётся вложенной функцией/JSX-фрагментом внутри родителя
 5. `index.ts` — публичный API слайса: реэкспорт только того, что нужно снаружи
 6. Подключи слайс сверху: в страницу, виджет или роутер (см. «Роутинг»)
@@ -202,7 +208,7 @@ export { SessionProvider, useSession } from "./SessionContext";
 
 ## Чего делать нельзя
 
-- Обращаться к `fetch`/`todoistClient`/`expo-sqlite` напрямую из `ui/` или `model/` — только через функцию `api/`-сегмента
+- Обращаться к `fetch`/`@doist/todoist-sdk`/`expo-sqlite` напрямую из `ui/` или `model/` — только через функцию `api/`-сегмента
 - Импортировать из чужого слайса мимо его `index.ts` или из слоя выше по списку (`entities` не знает про `features`, `features` — про `widgets` и `pages`)
 - Дублировать Zod-схему или тип, уже определённый в `entities/`
 - Создавать пустые слои и сегменты впрок
@@ -220,7 +226,7 @@ export { SessionProvider, useSession } from "./SessionContext";
 - **Один компонент/хелпер/хук — один файл тестов.** Файлы тестов не дробятся на несколько ради отдельных сценариев — деление на логические блоки внутри файла через `describe`/`it`, а не через новые файлы
 - Рендеринг и запросы к дереву — `render`, `fireEvent`, `waitFor`, `screen` из `@testing-library/react-native`
 - Запросы к дереву — через доступные пользователю признаки (`getByRole`, `getByText`, `getByLabelText`), не через `testID`, кроме случаев, где у элемента нет доступной пользователю роли или текста
-- Todoist SDK и `expo-sqlite` в тестах мокаются на уровне функций `api/`-сегмента, а не на уровне `fetch`/нативного модуля
+- `@doist/todoist-sdk` и `expo-sqlite` в тестах мокаются на уровне функций `api/`-сегмента, а не на уровне `fetch`/нативного модуля
 - Сценарий, взаимодействующий с формой на `react-hook-form` (сабмит, смена значения поля), в текущей версии `@testing-library/react-native` ломает следующий `render()` в том же файле (падает с ошибкой рендера тестового дерева) — несколько таких сценариев для одного компонента выражай **одним** `it`, последовательно меняя значение поля и сабмитя заново, а не отдельными `it`, каждый со своим `render()`
 
 
@@ -234,7 +240,7 @@ export { SessionProvider, useSession } from "./SessionContext";
 6. Ожидание ревью от человека
 7. `/git-commit`
 
-При изменении зависимостей — дополнительно `npx expo-doctor` перед шагом 4.
+При изменении зависимостей — дополнительно `bunx expo-doctor` перед шагом 4.
 
 
 ## Claude Code

@@ -47,9 +47,9 @@ For each plan point, in order:
 2. English, B2-level, for all identifiers, comments, error messages and test text (per the guide's "Язык кода"); comments only for non-obvious logic
 3. Run, in order, and fix everything they report before moving to the next point:
    ```bash
-   npx biome check --write .
-   npx tsc --noEmit
-   npx jest
+   bunx biome check --write .
+   bunx tsc --noEmit
+   bunx jest
    ```
 4. If a check fails for a reason unrelated to this point's change (pre-existing failure), report it instead of silently working around it, and ask how to proceed
 

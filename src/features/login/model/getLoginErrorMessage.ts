@@ -5,15 +5,16 @@ type AuthenticationAwareError = {
   isAuthenticationError: () => boolean;
 };
 
-const isAuthenticationError = (
+const hasIsAuthenticationErrorMethod = (
   error: unknown,
 ): error is AuthenticationAwareError =>
   typeof error === "object" &&
   error !== null &&
-  "isAuthenticationError" in error &&
   typeof (error as AuthenticationAwareError).isAuthenticationError ===
-    "function" &&
-  (error as AuthenticationAwareError).isAuthenticationError();
+    "function";
+
+const isAuthenticationError = (error: unknown): boolean =>
+  hasIsAuthenticationErrorMethod(error) && error.isAuthenticationError();
 
 export const getLoginErrorMessage = (error: unknown): string => {
   if (isAuthenticationError(error)) {

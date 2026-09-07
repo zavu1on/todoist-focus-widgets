@@ -15,7 +15,11 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "style": {
+        "useImportType": "warn",
+        "useExportType": "warn"
+      }
     }
   },
   "assist": {
