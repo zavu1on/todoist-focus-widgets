@@ -1,6 +1,6 @@
 import z from "zod";
+import { Project } from "@/entities/project";
 import { type Priority, prioritySchema } from "./priority";
-import { Project } from "./project";
 
 const dueSchema = z
   .object({

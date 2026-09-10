@@ -1,6 +1,6 @@
+import type { Project } from "@/entities/project";
 import type { TaskRow } from "../api/createTasksTable";
 import type { Priority } from "../model/priority";
-import type { Project } from "../model/project";
 import { Task } from "../model/task";
 
 export const mapTaskRowToTask = (row: TaskRow, project: Project): Task =>

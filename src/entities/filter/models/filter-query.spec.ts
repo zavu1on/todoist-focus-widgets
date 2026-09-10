@@ -1,4 +1,4 @@
-import { Priority } from "@/entities/todoist";
+import { Priority } from "@/entities/task";
 import { DueQueryConstraint } from "./due";
 import { FilterQuery, type ReconstituteFilterQueryInput } from "./filter-query";
 import { QueryConcatenator } from "./query-concatenator";

@@ -1,8 +1,6 @@
 import z from "zod";
-import {
-  prioritySchema,
-  projectQueryConstraintSchema,
-} from "@/entities/todoist";
+import { projectQueryConstraintSchema } from "@/entities/project";
+import { prioritySchema } from "@/entities/task";
 import { dueQueryConstraintSchema } from "./due";
 import { queryConcatenatorSchema } from "./query-concatenator";
 

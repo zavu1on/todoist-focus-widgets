@@ -1,19 +1,18 @@
 import type { SQLiteDatabase } from "expo-sqlite";
-import { mapProjectRowToProject } from "../lib/map-projects";
+import type { Project } from "@/entities/project";
+import { getProjects } from "@/entities/project";
 import { mapTaskRowToTask } from "../lib/map-tasks";
-import type { Project } from "../model/project";
 import type { Task } from "../model/task";
-import type { ProjectRow } from "./createProjectsTable";
 import type { TaskRow } from "./createTasksTable";
 
 export const getTasks = async (db: SQLiteDatabase): Promise<Task[]> => {
-  const [taskRows, projectRows] = await Promise.all([
+  const [taskRows, projects] = await Promise.all([
     db.getAllAsync<TaskRow>("SELECT * FROM tasks"),
-    db.getAllAsync<ProjectRow>("SELECT * FROM projects"),
+    getProjects(db),
   ]);
 
   const projectsById = new Map<string, Project>(
-    projectRows.map((row) => [row.id, mapProjectRowToProject(row)]),
+    projects.map((project) => [project.id, project]),
   );
 
   return taskRows.map((row) => {

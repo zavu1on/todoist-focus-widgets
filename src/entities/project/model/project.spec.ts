@@ -1,5 +1,5 @@
 import { type CreateProjectInput, Project } from "./project";
-import type { TodoistSyncProject } from "./todoist-sync-result";
+import type { TodoistSyncProject } from "./todoist-sync-project";
 
 const syncProjectFixture: TodoistSyncProject = {
   url: "https://todoist.com/showProject?id=1",

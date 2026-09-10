@@ -1,11 +1,9 @@
 import { Redirect, Stack } from "expo-router";
 import { type SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { createFiltersTable } from "@/entities/filter";
-import {
-  createLabelsTable,
-  createProjectsTable,
-  createTasksTable,
-} from "@/entities/todoist";
+import { createLabelsTable } from "@/entities/label";
+import { createProjectsTable } from "@/entities/project";
+import { createTasksTable } from "@/entities/task";
 import { useSession } from "@/shared/model";
 
 const createDBMigrations = async (db: SQLiteDatabase) => {

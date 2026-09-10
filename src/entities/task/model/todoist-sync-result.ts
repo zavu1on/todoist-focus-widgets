@@ -1,8 +1,6 @@
-import type { SyncLabel, SyncResponse } from "@doist/todoist-sdk";
-
-export type { SyncLabel };
-export type TodoistSyncItem = NonNullable<SyncResponse["items"]>[number];
-export type TodoistSyncProject = NonNullable<SyncResponse["projects"]>[number];
+import type { SyncLabel } from "@/entities/label";
+import type { TodoistSyncProject } from "@/entities/project";
+import type { TodoistSyncItem } from "./todoist-sync-item";
 
 type TodoistSyncData = {
   syncToken: string;

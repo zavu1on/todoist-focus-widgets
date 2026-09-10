@@ -1,7 +1,7 @@
+import { Project } from "@/entities/project";
 import { Priority } from "./priority";
-import { Project } from "./project";
 import { type CreateTaskInput, type ReconstituteTaskInput, Task } from "./task";
-import type { TodoistSyncItem } from "./todoist-sync-result";
+import type { TodoistSyncItem } from "./todoist-sync-item";
 
 const syncItemFixture: TodoistSyncItem = {
   isUncompletable: false,
