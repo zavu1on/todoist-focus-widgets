@@ -1,4 +1,4 @@
-import { projectQueryConstraintSchema } from "./project";
+import { projectQueryConstraintSchema } from "./project-query-constraint";
 
 describe("projectQueryConstraintSchema", () => {
   it("accepts a project with a non-empty id and name", () => {

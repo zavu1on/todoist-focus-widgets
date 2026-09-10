@@ -14,13 +14,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Тех. стек
 
-- **Expo** + **React Router** (Expo Router, файловая маршрутизация в `src/app/`) — см. [`AGENTS.md`](AGENTS.md) за правилами работы с версией SDK
-- **React Native**
+- **Expo** + **Expo Router** (файловая маршрутизация в `src/app/`) — см. [`AGENTS.md`](AGENTS.md) за правилами работы с версией SDK
+- **React Native** + **React Compiler** (автомемоизация, `experiments.reactCompiler` в `app.json`)
 - **React Native Android Widget** ([`react-native-android-widget`](https://www.npmjs.com/package/react-native-android-widget)) — рендеринг Android-виджетов (`Pin`, `List`) React-компонентами через `FlexWidget`/`ListWidget`
-- **[Todoist SDK](https://www.npmjs.com/package/@doist/todoist-sdk)** (`@doist/todoist-sdk`) — типизированный клиент Todoist API
+- **[Todoist SDK](https://www.npmjs.com/package/@doist/todoist-sdk)** (`@doist/todoist-sdk`) — типизированный клиент Todoist API, включая Todoist Sync API (см. [`docs/TODOIST_SYNC_API.md`](docs/TODOIST_SYNC_API.md))
 - **TanStack Query** — серверное состояние и кэш запросов к Todoist API через Todoist SDK
-- Локальное хранение конфигурации фильтров виджетов — SQLite (`expo-sqlite`)
-- Хранение Todoist Access Token — `expo-secure-store`
+- **React Hook Form** + **Zod** — формы и их валидация
+- **expo-sqlite** — локальное хранение конфигурации фильтров виджетов
+- **expo-secure-store** — хранение Todoist Access Token
+- **Biome** — линт и форматирование, **Jest** (`jest-expo`) + **Testing Library** — тесты
+
+Полная таблица стека с назначением каждой технологии в проекте — в разделе «Технологический стек» [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md).
+
+## Команды
+
+```bash
+bunx expo start               # dev-сервер
+bunx biome check .            # линт + проверка форматирования
+bunx biome check --write .    # линт + форматирование с автофиксом
+bunx tsc --noEmit             # typecheck
+bunx jest                     # все тесты
+bunx jest path/to/file.spec.ts   # один файл тестов
+bunx jest -t "название теста"    # тесты по названию
+bunx expo-doctor              # диагностика зависимостей (обязательно при их изменении)
+bunx expo install --fix       # правка несовместимых версий пакетов
+```
+
+Перед завершением задачи — `bunx tsc --noEmit`, `bunx biome check --write .`, `bunx jest` (порядок и полный SDLC — в разделе «SDLC» [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md)).
+
+## Архитектура
+
+**Feature-Sliced Design**, слои сверху вниз (верхний импортирует только из нижних): `app` → `pages` → `widgets` → `features` → `entities` → `shared`, алиасы `@/app`, `@/pages`, `@/widgets`, `@/features`, `@/entities`, `@/shared`. Внутри слайса — сегменты `ui/`, `model/`, `api/`; наружу слайс отдаёт только `index.ts`. Todoist API и `expo-sqlite` вызываются напрямую из `api/`-сегментов, без собственных обёрток/репозиториев.
+
+Слоёв `widgets` и `app`-провайдеров в коде пока нет — реализованы `entities/todoist`, `entities/filter`, `features/login`, `pages/login`, `pages/widget-list` и роуты `src/app/(auth)`, `src/app/(app)`. Полные правила архитектуры, naming, работы с TanStack Query/React Hook Form и React Compiler — [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md).
+
+## Docs-as-code
+
+Документация в `docs/` — часть кодовой базы, актуализируется в том же коммите, что и код. Единственная точка входа — [`docs/README.md`](docs/README.md): дерево **Файловая структура** там описывает назначение каждого файла в `docs/`, включая ТЗ ([`SPECIFICATION.md`](docs/SPECIFICATION.md)), архитектуру и стиль кода ([`CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md)), ресёрчи по Todoist Sync API и `react-native-android-widget`, а также ADR в `docs/decisions/`. При добавлении, удалении или изменении сути файла в `docs/` — обнови это дерево в том же коммите; полные правила форматирования — там же.
 
 ## Дизайн
 
@@ -28,7 +58,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## AI-инфраструктура (Claude Code)
 
-Установлен официальный плагин `expo@claude-plugins-official` (см. [`.claude/settings.json`](.claude/settings.json)) — набор скиллов для разработки на Expo (роутинг, нативные модули, EAS-сервисы и т.д.). Перед добавлением зависимостей и решением незнакомых Expo/EAS-задач проверяй, не покрыта ли задача одним из этих скиллов.
+Установлены два официальных плагина (см. [`.claude/settings.json`](.claude/settings.json)):
+
+- `expo@claude-plugins-official` — набор скиллов для разработки на Expo (роутинг, нативные модули, EAS-сервисы и т.д.). Перед добавлением зависимостей и решением незнакомых Expo/EAS-задач проверяй, не покрыта ли задача одним из этих скиллов
+- `ponytail@ponytail` — набор скиллов против переусложнения кода (YAGNI, минимальный диф, ревью и аудит на оверинжиниринг)
 
 ### Установленные скиллы
 
