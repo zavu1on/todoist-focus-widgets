@@ -1,8 +1,11 @@
 import z from "zod";
 import { projectQueryConstraintSchema } from "@/entities/project";
-import { prioritySchema } from "@/entities/task";
-import { dueQueryConstraintSchema } from "./due";
-import { queryConcatenatorSchema } from "./query-concatenator";
+import { prioritySchema, type Task } from "@/entities/task";
+import { dueQueryConstraintSchema, satisfiesDue } from "./due";
+import {
+  QueryConcatenator,
+  queryConcatenatorSchema,
+} from "./query-concatenator";
 
 export const filterQuerySchema = z.object({
   concatenator: queryConcatenatorSchema,
@@ -63,7 +66,21 @@ export class FilterQuery {
     );
   }
 
-  satisfiesFilter(_task: unknown): boolean {
-    throw new Error("method is not implemented");
+  satisfiesFilter(task: Task): boolean {
+    const conditions: boolean[] = [task.project.id === this.project.id];
+
+    if (this.priorities.length > 0) {
+      conditions.push(this.priorities.includes(task.priority));
+    }
+
+    if (this.labels.length > 0) {
+      conditions.push(this.labels.some((label) => task.labels.includes(label)));
+    }
+
+    conditions.push(satisfiesDue(this.due, task.due));
+
+    return this.concatenator === QueryConcatenator.AND
+      ? conditions.every(Boolean)
+      : conditions.some(Boolean);
   }
 }

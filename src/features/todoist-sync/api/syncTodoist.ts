@@ -1,13 +1,12 @@
 import { type SyncResourceType, TodoistApi } from "@doist/todoist-sdk";
-import type { TodoistSyncResult } from "../model/todoist-sync-result";
-import { getSyncToken } from "./getSyncToken";
-import { setSyncToken } from "./setSyncToken";
+import { getSyncToken, type TodoistSyncResult } from "@/entities/task";
 
 const SYNC_RESOURCE_TYPES: SyncResourceType[] = ["labels", "projects", "items"];
 
 /**
  * Syncs labels, projects and items (active, non-deleted tasks) with Todoist.
- * Persists the returned sync token so the next call fetches only the delta.
+ * Returns the new sync token; the caller is responsible for persisting it once the
+ * synced data has been saved locally.
  */
 export const syncTodoist = async (
   accessToken: string,
@@ -21,8 +20,6 @@ export const syncTodoist = async (
   if (!response.syncToken) {
     throw new Error("Todoist sync response is missing a sync token.");
   }
-
-  await setSyncToken(response.syncToken);
 
   const data = {
     syncToken: response.syncToken,

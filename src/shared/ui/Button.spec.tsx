@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { Text } from "react-native";
 import { Button } from "./Button";
 
 describe("Button", () => {
@@ -18,5 +19,19 @@ describe("Button", () => {
     expect(screen.queryByText("Connect")).toBeNull();
     fireEvent.press(screen.getByRole("button"));
     expect(onPress).not.toHaveBeenCalled();
+  });
+
+  it("renders custom children instead of a text label when given", async () => {
+    const onPress = jest.fn();
+    await render(
+      <Button onPress={onPress}>
+        <Text>Icon</Text>
+      </Button>,
+    );
+
+    fireEvent.press(screen.getByRole("button"));
+
+    expect(screen.getByText("Icon")).toBeTruthy();
+    expect(onPress).toHaveBeenCalled();
   });
 });

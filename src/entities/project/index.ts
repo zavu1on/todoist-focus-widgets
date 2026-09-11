@@ -4,6 +4,7 @@ export {
   getProjects,
   upsertProjects,
 } from "./api";
+export { mapSyncProjectToProject } from "./lib/map-projects";
 export {
   type CreateProjectInput,
   Project,

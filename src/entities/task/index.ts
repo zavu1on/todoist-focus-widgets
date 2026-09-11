@@ -5,16 +5,16 @@ export {
   getSyncToken,
   getTasks,
   setSyncToken,
-  syncTodoist,
   upsertTasks,
 } from "./api";
+export { mapSyncItemToTask } from "./lib/map-tasks";
 export {
   type CreateTaskInput,
+  type Due,
   Priority,
   prioritySchema,
   priorityVariants,
   Task,
-  type TaskSyncPayload,
   type TodoistDeltaSync,
   type TodoistFullSync,
   type TodoistSyncItem,

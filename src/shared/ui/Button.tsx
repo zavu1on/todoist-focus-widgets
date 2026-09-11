@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -9,7 +9,9 @@ import {
 } from "react-native";
 
 type ButtonProps = {
-  label: string;
+  label?: string;
+  children?: ReactNode;
+  accessibilityLabel?: string;
   onPress: () => void;
   disabled?: boolean;
   loading?: boolean;
@@ -18,6 +20,8 @@ type ButtonProps = {
 
 export const Button: FC<ButtonProps> = ({
   label,
+  children,
+  accessibilityLabel,
   onPress,
   disabled = false,
   loading = false,
@@ -25,6 +29,7 @@ export const Button: FC<ButtonProps> = ({
 }) => (
   <Pressable
     accessibilityRole="button"
+    accessibilityLabel={accessibilityLabel ?? label}
     style={({ pressed }) => [
       styles.button,
       pressed && styles.buttonPressed,
@@ -37,7 +42,7 @@ export const Button: FC<ButtonProps> = ({
     {loading ? (
       <ActivityIndicator color="#FFFFFF" />
     ) : (
-      <Text style={styles.label}>{label}</Text>
+      (children ?? <Text style={styles.label}>{label}</Text>)
     )}
   </Pressable>
 );

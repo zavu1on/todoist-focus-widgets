@@ -36,10 +36,6 @@ export const createTaskInputSchema = z.object({
 
 export type CreateTaskInput = z.infer<typeof createTaskInputSchema>;
 
-export const taskSyncPayloadSchema = createTaskInputSchema.omit({ id: true });
-
-export type TaskSyncPayload = z.infer<typeof taskSyncPayloadSchema>;
-
 const reconstituteTaskInputSchema = z.object({
   id: z.string(),
   content: z.string(),
@@ -180,23 +176,5 @@ export class Task {
       input.url,
       labelsSchema.parse(parsedLabels),
     );
-  }
-
-  /**
-   * Overwrites every field from a new sync delta payload, since the Todoist Sync API always
-   * sends the whole current state of a task, never a partial patch.
-   *
-   * @throws {z.ZodError<TaskSyncPayload>} when payload doesn't match taskSyncPayloadSchema
-   */
-  updateFromSync(payload: TaskSyncPayload) {
-    const validPayload = taskSyncPayloadSchema.parse(payload);
-
-    this._content = validPayload.content;
-    this._project = validPayload.project;
-    this._priority = validPayload.priority;
-    this._due = validPayload.due;
-    this._checked = validPayload.checked;
-    this._url = validPayload.url;
-    this._labels = validPayload.labels;
   }
 }

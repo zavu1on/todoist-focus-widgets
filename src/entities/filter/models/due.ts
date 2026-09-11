@@ -1,5 +1,6 @@
 import z from "zod";
-import type { QueryFieldVariant } from "@/shared/lib";
+import type { Due } from "@/entities/task";
+import { dayjs, type QueryFieldVariant } from "@/shared/lib";
 
 export const DueQueryConstraint = {
   TODAY_WITH_OVERDUE: "today_with_overdue",
@@ -33,3 +34,31 @@ export const dueVariants: QueryFieldVariant<DueQueryConstraint>[] = [
     value: DueQueryConstraint.NO_DATE,
   },
 ];
+
+export const satisfiesDue = (
+  constraint: DueQueryConstraint,
+  due: Due,
+): boolean => {
+  if (constraint === DueQueryConstraint.NO_DATE) {
+    return due === null;
+  }
+
+  if (due === null) {
+    return false;
+  }
+
+  const dueDate = dayjs(due.date);
+  const today = dayjs();
+
+  switch (constraint) {
+    case DueQueryConstraint.TODAY_WITH_OVERDUE:
+      return !dueDate.isAfter(today, "day");
+    case DueQueryConstraint.TODAY:
+      return dueDate.isSame(today, "day");
+    case DueQueryConstraint.NEXT_7_DAYS:
+      return (
+        !dueDate.isBefore(today, "day") &&
+        !dueDate.isAfter(today.add(7, "day"), "day")
+      );
+  }
+};

@@ -2,6 +2,10 @@ const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);
 
+// expo-sqlite's web implementation loads its SQLite engine as a .wasm file,
+// which Metro doesn't treat as an asset by default.
+config.resolver.assetExts.push("wasm");
+
 // @doist/todoist-sdk dynamically imports "fs"/"path" (Node-only file-upload
 // path) and "undici" (Node-only HTTP dispatcher, used only when
 // isNodeEnvironment() is true) — code paths this app never hits. Metro still

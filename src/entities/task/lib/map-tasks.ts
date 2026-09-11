@@ -2,6 +2,22 @@ import type { Project } from "@/entities/project";
 import type { TaskRow } from "../api/createTasksTable";
 import type { Priority } from "../model/priority";
 import { Task } from "../model/task";
+import type { TodoistSyncItem } from "../model/todoist-sync-item";
+
+export const mapSyncItemToTask = (
+  item: TodoistSyncItem,
+  project: Project,
+): Task =>
+  Task.create({
+    id: item.id,
+    content: item.content,
+    project,
+    priority: item.priority as Priority,
+    due: item.due,
+    checked: item.checked,
+    url: item.url,
+    labels: item.labels,
+  });
 
 export const mapTaskRowToTask = (row: TaskRow, project: Project): Task =>
   Task.reconstitute({

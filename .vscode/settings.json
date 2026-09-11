@@ -8,7 +8,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.ts": "${capture}.spec.ts, ${capture}.test.ts, ${capture}.spec.tsx, ${capture}.test.tsx",
-    "*.tsx": "${capture}.spec.tsx, ${capture}.test.tsx"
+    "*.tsx": "${capture}.spec.tsx, ${capture}.test.tsx, ${capture}.stories.tsx"
   },
   "cSpell.words": [
     "Concatenator"

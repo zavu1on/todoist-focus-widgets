@@ -38,21 +38,3 @@ describe("Label.reconstitute", () => {
     expect(label.color).toBe("red");
   });
 });
-
-describe("Label.prototype.updateFromSync", () => {
-  it("overwrites every field with the new sync delta", () => {
-    const label = Label.create(createInput);
-
-    label.updateFromSync({ name: "important", color: "blue" });
-
-    expect(label.name).toBe("important");
-    expect(label.color).toBe("blue");
-  });
-
-  it("rejects an invalid payload, leaving the label unchanged", () => {
-    const label = Label.create(createInput);
-
-    expect(() => label.updateFromSync({ name: "", color: "blue" })).toThrow();
-    expect(label.name).toBe("urgent");
-  });
-});

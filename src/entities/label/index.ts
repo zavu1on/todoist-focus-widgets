@@ -4,9 +4,5 @@ export {
   getLabels,
   upsertLabels,
 } from "./api";
-export {
-  type CreateLabelInput,
-  Label,
-  type LabelSyncPayload,
-  type SyncLabel,
-} from "./model";
+export { mapSyncLabelToLabel } from "./lib/map-labels";
+export { type CreateLabelInput, Label, type SyncLabel } from "./model";
