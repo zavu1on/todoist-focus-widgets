@@ -9,13 +9,13 @@ import {
 
 export const filterQuerySchema = z.object({
   concatenator: queryConcatenatorSchema,
-  project: projectQueryConstraintSchema,
+  project: projectQueryConstraintSchema.optional(),
   priorities: z.array(
     prioritySchema,
     "Priorities must be a list of valid priority values.",
   ),
   labels: z.array(z.string("Each label must be a text value.")),
-  due: dueQueryConstraintSchema,
+  due: dueQueryConstraintSchema.optional(),
 });
 
 export type ReconstituteFilterQueryInput = z.infer<typeof filterQuerySchema>;
@@ -67,7 +67,11 @@ export class FilterQuery {
   }
 
   satisfiesFilter(task: Task): boolean {
-    const conditions: boolean[] = [task.project.id === this.project.id];
+    const conditions: boolean[] = [];
+
+    if (this.project) {
+      conditions.push(task.project.id === this.project.id);
+    }
 
     if (this.priorities.length > 0) {
       conditions.push(this.priorities.includes(task.priority));
@@ -77,7 +81,13 @@ export class FilterQuery {
       conditions.push(this.labels.some((label) => task.labels.includes(label)));
     }
 
-    conditions.push(satisfiesDue(this.due, task.due));
+    if (this.due) {
+      conditions.push(satisfiesDue(this.due, task.due));
+    }
+
+    if (conditions.length === 0) {
+      return true;
+    }
 
     return this.concatenator === QueryConcatenator.AND
       ? conditions.every(Boolean)

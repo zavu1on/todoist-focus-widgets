@@ -22,8 +22,9 @@ export const getFilterCardViewModel = (
     filter.query.satisfiesFilter(task),
   );
   const [firstTask] = matchingTasks;
-  const project =
-    projects.find((p) => p.id === filter.query.project.id) ?? null;
+  const project = filter.query.project
+    ? (projects.find((p) => p.id === filter.query.project?.id) ?? null)
+    : null;
 
   return {
     filterId: filter.id,

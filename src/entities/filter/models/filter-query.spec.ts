@@ -78,6 +78,14 @@ describe("FilterQuery.prototype.satisfiesFilter", () => {
     );
   });
 
+  it("ignores project when undefined", () => {
+    const query = FilterQuery.of({ ...validInput, project: undefined });
+
+    expect(query.satisfiesFilter(buildTask({ project: workProject }))).toBe(
+      true,
+    );
+  });
+
   it("ignores priority when the list is empty, otherwise requires membership", () => {
     const emptyPriorities = FilterQuery.of({ ...validInput, priorities: [] });
     const withPriorities = FilterQuery.of({
@@ -135,6 +143,24 @@ describe("FilterQuery.prototype.satisfiesFilter", () => {
     ).toBe(true);
     expect(noDate.satisfiesFilter(buildTask({ due: null }))).toBe(true);
     expect(noDate.satisfiesFilter(buildTask())).toBe(false);
+  });
+
+  it("ignores due when undefined", () => {
+    const query = FilterQuery.of({ ...validInput, due: undefined });
+
+    expect(query.satisfiesFilter(buildTask({ due: null }))).toBe(true);
+  });
+
+  it("matches everything when no field participates in filtering", () => {
+    const query = FilterQuery.of({
+      ...validInput,
+      project: undefined,
+      priorities: [],
+      labels: [],
+      due: undefined,
+    });
+
+    expect(query.satisfiesFilter(buildTask())).toBe(true);
   });
 
   it("combines conditions with AND or OR per the concatenator", () => {
