@@ -7,6 +7,7 @@ import {
   Text,
   type ViewStyle,
 } from "react-native";
+import { fonts } from "./fonts";
 
 type ButtonProps = {
   label?: string;
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#B93A2F",
   },
   label: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: fonts.poppinsSemiBold,
     fontSize: 16,
     color: "#FFFFFF",
   },

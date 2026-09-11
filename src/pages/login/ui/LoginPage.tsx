@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginForm } from "@/features/login";
+import { fonts } from "@/shared/ui";
 
 export const LoginPage: FC = () => (
   <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -43,14 +44,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   title: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: fonts.poppinsBold,
     fontSize: 28,
     lineHeight: 32,
     color: "#25221E",
     letterSpacing: -0.56,
   },
   subtitle: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 15,
     lineHeight: 22.5,
     color: "#808080",

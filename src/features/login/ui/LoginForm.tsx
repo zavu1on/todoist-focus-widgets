@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Button } from "@/shared/ui";
+import { Button, fonts } from "@/shared/ui";
 import { useLoginMutation } from "../api/useLoginMutation";
 import {
   type LoginFormValues,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   fieldLabel: {
-    fontFamily: "DMSans_700Bold",
+    fontFamily: fonts.dmSansBold,
     fontSize: 13,
     color: "#25221E",
   },
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0DBD5",
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 18,
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 15,
     color: "#25221E",
     letterSpacing: 0.3,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderColor: "#DB4C3F",
   },
   errorText: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 13,
     color: "#D1453B",
   },

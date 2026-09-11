@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { fonts } from "@/shared/ui";
 import type { FilterCardViewModel } from "../model/getFilterCardViewModel";
 
 type FilterCardProps = {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   title: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: fonts.poppinsBold,
     fontSize: 11.5,
     lineHeight: TITLE_LINE_HEIGHT,
     height: TITLE_LINE_HEIGHT * 2,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 2.5,
   },
   projectName: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 9,
     color: "#808080",
     flexShrink: 1,
@@ -97,12 +98,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   remainingCount: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 8.5,
     color: "#A8A29B",
   },
   filterTitle: {
-    fontFamily: "DMSans_700Bold",
+    fontFamily: fonts.dmSansBold,
     fontSize: 13,
     color: "#25221E",
   },

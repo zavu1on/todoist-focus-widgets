@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { StyleSheet, Text } from "react-native";
-import { Button } from "@/shared/ui";
+import { Button, fonts } from "@/shared/ui";
 
 export const FloatingActionButton: FC = () => (
   <Button style={styles.fab} accessibilityLabel="Add widget" onPress={() => {}}>
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   icon: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: fonts.poppinsSemiBold,
     fontSize: 30,
     color: "#FFFFFF",
     lineHeight: 30,

@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFiltersQuery } from "@/entities/filter";
 import { useTodoistSyncQuery } from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
-import { Button, SkeletonBlock } from "@/shared/ui";
+import { Button, fonts, SkeletonBlock } from "@/shared/ui";
 import { getFilterCardViewModel } from "../model/getFilterCardViewModel";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 import { FloatingActionButton } from "./FloatingActionButton";
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     marginTop: -5, // visual correction for centering the header brand
   },
   headerTitle: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: fonts.poppinsBold,
     fontSize: 21,
     color: "#25221E",
   },
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   logOutIcon: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: fonts.poppinsSemiBold,
     fontSize: 18,
     color: "#FFFFFF",
   },

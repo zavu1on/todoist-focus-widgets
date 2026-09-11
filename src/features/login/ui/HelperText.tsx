@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { Linking, StyleSheet, Text } from "react-native";
+import { fonts } from "@/shared/ui";
 
 const TODOIST_TOKEN_SETTINGS_URL =
   "https://app.todoist.com/app/settings/integrations/developer";
@@ -19,13 +20,13 @@ export const HelperText: FC = () => (
 
 const styles = StyleSheet.create({
   helperText: {
-    fontFamily: "DMSans_400Regular",
+    fontFamily: fonts.dmSansRegular,
     fontSize: 13,
     lineHeight: 19.5,
     color: "#808080",
   },
   helperLink: {
-    fontFamily: "DMSans_700Bold",
+    fontFamily: fonts.dmSansBold,
     color: "#DB4C3F",
   },
 });
