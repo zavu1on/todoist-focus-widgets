@@ -32,13 +32,13 @@ describe("FilterCard", () => {
       <FilterCard viewModel={{ ...baseViewModel, remainingCount: 0 }} />,
     );
 
-    expect(screen.queryByText(/more/)).toBeNull();
+    expect(screen.queryByText(/^\+/)).toBeNull();
   });
 
   it("shows the remaining count when there are extra matches", async () => {
     await render(<FilterCard viewModel={baseViewModel} />);
 
-    expect(screen.getByText("+3 more")).toBeTruthy();
+    expect(screen.getByText("+3")).toBeTruthy();
   });
 
   it("hides the project row when no project is set", async () => {

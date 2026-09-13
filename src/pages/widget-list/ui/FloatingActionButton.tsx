@@ -16,8 +16,8 @@ export const FloatingActionButton: FC = () => (
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    right: 24,
-    bottom: 28,
+    right: 20,
+    bottom: 26,
     width: 60,
     height: 60,
     borderRadius: 20,

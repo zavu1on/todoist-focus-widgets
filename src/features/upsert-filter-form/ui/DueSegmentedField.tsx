@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     gap: 6,
     padding: 5,
     borderRadius: 14,
-    backgroundColor: "#F1EEEA",
+    backgroundColor: colors.surfaceMuted,
   },
   segment: {
     height: 34,

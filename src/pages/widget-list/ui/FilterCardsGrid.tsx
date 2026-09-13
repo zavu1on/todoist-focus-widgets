@@ -17,8 +17,8 @@ type FilterCardsGridProps = {
   viewModels: FilterCardViewModel[];
 };
 
-const CONTENT_PADDING = 24;
-const COLUMN_GAP = 16;
+const CONTENT_PADDING = 20;
+const COLUMN_GAP = 14;
 const COLUMNS = 2;
 
 export const FilterCardsGrid: FC<FilterCardsGridProps> = ({ viewModels }) => {
@@ -74,7 +74,7 @@ const keyExtractor = (item: FilterCardViewModel) => item.filterId.toString();
 const styles = StyleSheet.create({
   content: {
     padding: CONTENT_PADDING,
-    gap: 22,
+    gap: COLUMN_GAP,
   },
   row: {
     gap: COLUMN_GAP,

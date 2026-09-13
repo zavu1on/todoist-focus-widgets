@@ -9,8 +9,6 @@ type FilterCardProps = {
   onLongPress?: () => void;
 };
 
-const TITLE_LINE_HEIGHT = 15;
-
 export const FilterCard: FC<FilterCardProps> = ({
   viewModel,
   onPress,
@@ -18,54 +16,51 @@ export const FilterCard: FC<FilterCardProps> = ({
 }) => {
   const content = (
     <>
-      <View style={styles.card}>
-        <View
-          style={[
-            styles.priorityBar,
-            { backgroundColor: viewModel.priorityColor },
-          ]}
-        />
-        <View style={styles.content}>
-          <Text style={styles.title} numberOfLines={2}>
-            {viewModel.taskTitle ?? "All clear."}
+      <View
+        style={[styles.topBar, { backgroundColor: viewModel.priorityColor }]}
+      />
+      <View style={styles.content}>
+        <View style={styles.titleRow}>
+          <Text style={styles.filterTitle} numberOfLines={1}>
+            {viewModel.filterTitle}
           </Text>
-          {viewModel.projectName !== null && (
-            <View style={styles.projectRow}>
-              <View
-                style={[
-                  styles.projectDot,
-                  {
-                    backgroundColor:
-                      viewModel.projectColor ?? colors.textSecondary,
-                  },
-                ]}
-              />
-              <Text style={styles.projectName} numberOfLines={1}>
-                {viewModel.projectName}
-              </Text>
+          {viewModel.remainingCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>+{viewModel.remainingCount}</Text>
             </View>
           )}
-          <View style={styles.spacer} />
-          {viewModel.remainingCount > 0 && (
-            <Text style={styles.remainingCount}>
-              +{viewModel.remainingCount} more
-            </Text>
-          )}
         </View>
+        <View style={styles.divider} />
+        <Text style={styles.taskTitle} numberOfLines={2}>
+          {viewModel.taskTitle ?? "All clear."}
+        </Text>
+        {viewModel.projectName !== null && (
+          <View style={styles.projectRow}>
+            <View
+              style={[
+                styles.projectDot,
+                {
+                  backgroundColor:
+                    viewModel.projectColor ?? colors.textSecondary,
+                },
+              ]}
+            />
+            <Text style={styles.projectName} numberOfLines={1}>
+              {viewModel.projectName}
+            </Text>
+          </View>
+        )}
       </View>
-      <Text style={styles.filterTitle} numberOfLines={1}>
-        {viewModel.filterTitle}
-      </Text>
     </>
   );
 
   if (onPress === undefined) {
-    return <View style={styles.container}>{content}</View>;
+    return <View style={styles.card}>{content}</View>;
   }
 
   return (
     <Button
-      style={styles.container}
+      style={styles.card}
       accessibilityLabel={viewModel.filterTitle}
       onPress={onPress}
       onLongPress={onLongPress}
@@ -76,66 +71,82 @@ export const FilterCard: FC<FilterCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 8,
-    height: undefined,
-    borderRadius: 0,
-    backgroundColor: "transparent",
-    alignItems: "stretch",
-    justifyContent: "flex-start",
-  },
   card: {
-    height: 92,
-    borderRadius: 16,
-    backgroundColor: colors.background,
+    flex: 1,
+    height: undefined,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.divider,
-    flexDirection: "row",
+    alignItems: "stretch",
+    justifyContent: "flex-start",
     overflow: "hidden",
+    shadowColor: colors.textPrimary,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  priorityBar: {
-    width: 5,
+  topBar: {
+    height: 6,
   },
   content: {
-    flex: 1,
-    padding: 10,
+    padding: 14,
+    paddingTop: 13,
+    gap: 10,
     minWidth: 0,
   },
-  title: {
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    minWidth: 0,
+  },
+  filterTitle: {
+    flex: 1,
     fontFamily: fonts.poppinsBold,
-    fontSize: 11.5,
-    lineHeight: TITLE_LINE_HEIGHT,
-    height: TITLE_LINE_HEIGHT * 2,
+    fontSize: 14,
+    color: colors.textPrimary,
+  },
+  badge: {
+    height: 22,
+    minWidth: 22,
+    paddingHorizontal: 7,
+    borderRadius: 8,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeText: {
+    fontFamily: fonts.dmSansBold,
+    fontSize: 12,
+    color: colors.iconMuted,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#EFEBE5",
+  },
+  taskTitle: {
+    fontFamily: fonts.dmSansRegular,
+    fontSize: 15,
+    lineHeight: 20,
     color: colors.textPrimary,
   },
   projectRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginTop: 5,
+    gap: 6,
+    minWidth: 0,
   },
   projectDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
   },
   projectName: {
     fontFamily: fonts.dmSansRegular,
-    fontSize: 9,
+    fontSize: 12.5,
     color: colors.textSecondary,
     flexShrink: 1,
-  },
-  spacer: {
-    flex: 1,
-  },
-  remainingCount: {
-    fontFamily: fonts.dmSansRegular,
-    fontSize: 8.5,
-    color: colors.textMuted,
-  },
-  filterTitle: {
-    fontFamily: fonts.dmSansBold,
-    fontSize: 13,
-    color: colors.textPrimary,
   },
 });

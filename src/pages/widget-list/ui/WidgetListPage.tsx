@@ -6,7 +6,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getFilterCardViewModel, useFiltersQuery } from "@/entities/filter";
 import { useTodoistSyncQuery } from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
-import { Button, colors, fonts, SkeletonBlock } from "@/shared/ui";
+import {
+  Button,
+  colors,
+  fonts,
+  LogoutIcon,
+  ReloadIcon,
+  SkeletonBlock,
+} from "@/shared/ui";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 import { FloatingActionButton } from "./FloatingActionButton";
 
@@ -59,16 +66,21 @@ export const WidgetListPage: FC = () => {
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <View style={styles.headerBrand}>
-          <View style={styles.logoMark} />
-          <Text style={styles.headerTitle}>Focus Widget</Text>
-        </View>
+        <View style={styles.logoMark} />
+        <Text style={styles.headerTitle}>Focus Widget</Text>
+        <Button
+          style={styles.refreshButton}
+          accessibilityLabel="Refresh"
+          onPress={() => {}}
+        >
+          <ReloadIcon size={18} color={colors.iconMuted} />
+        </Button>
         <Button
           style={styles.logOutButton}
           accessibilityLabel="Log out"
           onPress={handleLogOut}
         >
-          <Text style={styles.logOutIcon}>⎋</Text>
+          <LogoutIcon size={18} color={colors.surface} />
         </Button>
       </View>
 
@@ -110,40 +122,37 @@ const styles = StyleSheet.create({
     height: 48,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-  },
-  headerBrand: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
+    gap: 10,
+    paddingHorizontal: 20,
   },
   logoMark: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
+    width: 30,
+    height: 30,
+    borderRadius: 9,
     backgroundColor: colors.primary,
-    marginTop: -5, // visual correction for centering the header brand
+    marginTop: -5, // visual correction for centering against the header title's cap height
   },
   headerTitle: {
+    flex: 1,
     fontFamily: fonts.poppinsBold,
     fontSize: 21,
     color: colors.textPrimary,
+  },
+  refreshButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: "#F4F1ED",
   },
   logOutButton: {
     width: 36,
     height: 36,
     borderRadius: 12,
   },
-  logOutIcon: {
-    fontFamily: fonts.poppinsSemiBold,
-    fontSize: 18,
-    color: colors.surface,
-  },
   skeletonGrid: {
     flex: 1,
-    padding: 24,
-    gap: 22,
+    padding: 20,
+    gap: 14,
   },
   errorContainer: {
     flex: 1,
