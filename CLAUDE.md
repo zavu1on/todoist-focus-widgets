@@ -46,7 +46,7 @@ bunx expo install --fix       # правка несовместимых верс
 
 **Feature-Sliced Design**, слои сверху вниз (верхний импортирует только из нижних): `app` → `pages` → `widgets` → `features` → `entities` → `shared`, алиасы `@/app`, `@/pages`, `@/widgets`, `@/features`, `@/entities`, `@/shared`. Внутри слайса — сегменты `ui/`, `model/`, `api/`; наружу слайс отдаёт только `index.ts`. Todoist API и `expo-sqlite` вызываются напрямую из `api/`-сегментов, без собственных обёрток/репозиториев.
 
-Слоёв `widgets` и `app`-провайдеров в коде пока нет — реализованы `entities/task`, `entities/label`, `entities/project`, `entities/filter`, `features/login`, `pages/login`, `pages/widget-list` и роуты `src/app/(auth)`, `src/app/(app)`. Полные правила архитектуры, naming, работы с TanStack Query/React Hook Form и React Compiler — [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md).
+Слоя `app`-провайдеров в коде пока нет — реализованы `entities/task`, `entities/label`, `entities/project`, `entities/filter`, `features/login`, `features/filter-form`, `widgets/filter-card`, `pages/login`, `pages/widget-list`, `pages/filter-form` и роуты `src/app/(auth)`, `src/app/(app)`. Полные правила архитектуры, naming, работы с TanStack Query/React Hook Form и React Compiler — [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md).
 
 ## Docs-as-code
 

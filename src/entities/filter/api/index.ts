@@ -3,4 +3,7 @@ export { createFiltersTable } from "./createFiltersTable";
 export { deleteFilter } from "./deleteFilter";
 export { getFilters } from "./getFilters";
 export { updateFilter } from "./updateFilter";
+export { useCreateFilterMutation } from "./useCreateFilterMutation";
+export { useDeleteFilterMutation } from "./useDeleteFilterMutation";
 export { useFiltersQuery } from "./useFiltersQuery";
+export { useUpdateFilterMutation } from "./useUpdateFilterMutation";

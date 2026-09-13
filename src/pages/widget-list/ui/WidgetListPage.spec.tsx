@@ -1,14 +1,27 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Alert } from "react-native";
-import { Filter, useFiltersQuery } from "@/entities/filter";
+import {
+  Filter,
+  useDeleteFilterMutation,
+  useFiltersQuery,
+} from "@/entities/filter";
 import { Project } from "@/entities/project";
 import { useTodoistSyncQuery } from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
 import { WidgetListPage } from "./WidgetListPage";
 
+jest.mock("expo-router", () => ({
+  router: { push: jest.fn() },
+  useFocusEffect: (effect: () => void) => {
+    const { useEffect } = jest.requireActual("react");
+    useEffect(effect, [effect]);
+  },
+}));
+
 jest.mock("@/entities/filter", () => ({
   ...jest.requireActual("@/entities/filter"),
   useFiltersQuery: jest.fn(),
+  useDeleteFilterMutation: jest.fn(),
 }));
 
 jest.mock("@/features/todoist-sync", () => ({
@@ -22,6 +35,7 @@ jest.mock("@/shared/model", () => ({
 const mockedUseFiltersQuery = useFiltersQuery as jest.Mock;
 const mockedUseTodoistSyncQuery = useTodoistSyncQuery as jest.Mock;
 const mockedUseSession = useSession as jest.Mock;
+const mockedUseDeleteFilterMutation = useDeleteFilterMutation as jest.Mock;
 
 const inboxProject = Project.create({ id: "p1", name: "Inbox", color: "red" });
 
@@ -38,6 +52,10 @@ const filterFixture = Filter.create({
 
 beforeEach(() => {
   mockedUseSession.mockReturnValue({ signOut: jest.fn() });
+  mockedUseDeleteFilterMutation.mockReturnValue({
+    mutate: jest.fn(),
+    isPending: false,
+  });
 });
 
 afterEach(() => {
@@ -46,7 +64,11 @@ afterEach(() => {
 
 describe("WidgetListPage", () => {
   it("shows a skeleton while loading", async () => {
-    mockedUseFiltersQuery.mockReturnValue({ isPending: true, data: undefined });
+    mockedUseFiltersQuery.mockReturnValue({
+      isPending: true,
+      data: undefined,
+      refetch: jest.fn(),
+    });
     mockedUseTodoistSyncQuery.mockReturnValue({
       isPending: true,
       data: undefined,
@@ -61,6 +83,7 @@ describe("WidgetListPage", () => {
     mockedUseFiltersQuery.mockReturnValue({
       isPending: false,
       data: [filterFixture],
+      refetch: jest.fn(),
     });
     mockedUseTodoistSyncQuery.mockReturnValue({
       isPending: false,
@@ -73,9 +96,62 @@ describe("WidgetListPage", () => {
     expect(screen.getByText("All clear.")).toBeTruthy();
   });
 
+  describe("sync error", () => {
+    beforeEach(() => {
+      mockedUseFiltersQuery.mockReturnValue({
+        isPending: false,
+        data: [],
+        refetch: jest.fn(),
+      });
+    });
+
+    it("shows the error message and its cause instead of the grid", async () => {
+      const refetch = jest.fn();
+      mockedUseTodoistSyncQuery.mockReturnValue({
+        isPending: false,
+        isError: true,
+        error: new Error("Failed to save the synced Todoist data locally.", {
+          cause: new Error("SQLite is out of disk space."),
+        }),
+        data: undefined,
+        refetch,
+      });
+
+      await render(<WidgetListPage />);
+
+      expect(
+        screen.getByText("Failed to save the synced Todoist data locally."),
+      ).toBeTruthy();
+      expect(screen.getByText("SQLite is out of disk space.")).toBeTruthy();
+
+      fireEvent.press(screen.getByRole("button", { name: "Try again" }));
+      expect(refetch).toHaveBeenCalled();
+    });
+
+    it("shows only the message when the error has no cause", async () => {
+      mockedUseTodoistSyncQuery.mockReturnValue({
+        isPending: false,
+        isError: true,
+        error: new Error("You need to connect your Todoist account first."),
+        data: undefined,
+        refetch: jest.fn(),
+      });
+
+      await render(<WidgetListPage />);
+
+      expect(
+        screen.getByText("You need to connect your Todoist account first."),
+      ).toBeTruthy();
+    });
+  });
+
   describe("log out confirmation", () => {
     beforeEach(() => {
-      mockedUseFiltersQuery.mockReturnValue({ isPending: false, data: [] });
+      mockedUseFiltersQuery.mockReturnValue({
+        isPending: false,
+        data: [],
+        refetch: jest.fn(),
+      });
       mockedUseTodoistSyncQuery.mockReturnValue({
         isPending: false,
         data: { tasks: [], projects: [], labels: [] },

@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Button, fonts } from "@/shared/ui";
+import { Button, colors, fonts } from "@/shared/ui";
 import { useLoginMutation } from "../api/useLoginMutation";
 import {
   type LoginFormValues,
@@ -43,7 +43,7 @@ export const LoginForm: FC = () => {
               accessibilityLabel="API token"
               style={[styles.input, isTokenFieldFocused && styles.inputFocused]}
               placeholder="Paste your API token"
-              placeholderTextColor="#A8A29B"
+              placeholderTextColor={colors.textMuted}
               autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry
@@ -87,28 +87,28 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontFamily: fonts.dmSansBold,
     fontSize: 13,
-    color: "#25221E",
+    color: colors.textPrimary,
   },
   input: {
     height: 56,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E0DBD5",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     paddingHorizontal: 18,
     fontFamily: fonts.dmSansRegular,
     fontSize: 15,
-    color: "#25221E",
+    color: colors.textPrimary,
     letterSpacing: 0.3,
   },
   inputFocused: {
     borderWidth: 1.5,
-    borderColor: "#DB4C3F",
+    borderColor: colors.primary,
   },
   errorText: {
     fontFamily: fonts.dmSansRegular,
     fontSize: 13,
-    color: "#D1453B",
+    color: colors.danger,
   },
   spacer: {
     flex: 1,

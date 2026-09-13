@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { View } from "react-native";
-import { PRIORITY_COLORS } from "../model/priorityColors";
+import { colors } from "@/shared/ui";
+import { PRIORITY_COLORS } from "../models/priorityColors";
 import { FilterCard } from "./FilterCard";
 
 const priorityOptions = {
@@ -11,7 +12,7 @@ const priorityOptions = {
 };
 
 const meta: Meta<typeof FilterCard> = {
-  title: "widget-list/FilterCard",
+  title: "entities/filter/FilterCard",
   component: FilterCard,
   decorators: [
     (Story) => (
@@ -42,7 +43,7 @@ export const Playground: Story = {
     remainingCount: 3,
     priorityColor: priorityOptions.P1,
     projectName: "Errands",
-    projectColor: "#EB8909",
+    projectColor: colors.warning,
     filterTitle: "Groceries",
   },
   argTypes: {

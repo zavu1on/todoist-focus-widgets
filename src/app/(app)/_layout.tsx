@@ -5,6 +5,7 @@ import { createLabelsTable } from "@/entities/label";
 import { createProjectsTable } from "@/entities/project";
 import { createTasksTable } from "@/entities/task";
 import { useSession } from "@/shared/model";
+import { colors } from "@/shared/ui";
 
 const createDBMigrations = async (db: SQLiteDatabase) => {
   await db.execAsync("PRAGMA foreign_keys = ON;");
@@ -32,8 +33,17 @@ export default function AppLayout() {
   return (
     <SQLiteProvider databaseName="focus-widgets.db" onInit={createDBMigrations}>
       <Stack
-        screenOptions={{ headerShown: false, animation: "slide_from_right" }}
-      />
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
+          // No animation: expo-router unmounts a popped screen before its pop transition finishes.
+          // It's a conscious crutch. Animation is implemented in UpsertFilterForm component.
+          animation: "none",
+        }}
+      >
+        <Stack.Screen name="filter/new" />
+        <Stack.Screen name="filter/[id]" />
+      </Stack>
     </SQLiteProvider>
   );
 }

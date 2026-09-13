@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { View } from "react-native";
-import type { FilterCardViewModel } from "../model/getFilterCardViewModel";
+import type { FilterCardViewModel } from "@/entities/filter";
+import { colors } from "@/shared/ui";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 
 const sampleViewModels: FilterCardViewModel[] = [
@@ -9,34 +10,34 @@ const sampleViewModels: FilterCardViewModel[] = [
     filterTitle: "Groceries",
     taskTitle: "Buy oat milk + coffee filters",
     remainingCount: 3,
-    priorityColor: "#D1453B",
+    priorityColor: colors.danger,
     projectName: "Errands",
-    projectColor: "#EB8909",
+    projectColor: colors.warning,
   },
   {
     filterId: 2,
     filterTitle: "Deep work",
     taskTitle: "Send the Q3 recap to the whole leadership team before Friday",
     remainingCount: 6,
-    priorityColor: "#246FE0",
+    priorityColor: colors.info,
     projectName: "Work",
-    projectColor: "#246FE0",
+    projectColor: colors.info,
   },
   {
     filterId: 3,
     filterTitle: "Home evening",
     taskTitle: null,
     remainingCount: 0,
-    priorityColor: "#E0E0E0",
+    priorityColor: colors.neutral,
     projectName: "Home",
-    projectColor: "#25221E",
+    projectColor: colors.textPrimary,
   },
   {
     filterId: 4,
     filterTitle: "No project set",
     taskTitle: "Water the plants",
     remainingCount: 0,
-    priorityColor: "#EB8909",
+    priorityColor: colors.warning,
     projectName: null,
     projectColor: null,
   },

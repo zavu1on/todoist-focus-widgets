@@ -1,15 +1,26 @@
+import { useFocusEffect } from "expo-router";
 import type { FC } from "react";
+import { useCallback } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFiltersQuery } from "@/entities/filter";
+import { getFilterCardViewModel, useFiltersQuery } from "@/entities/filter";
 import { useTodoistSyncQuery } from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
-import { Button, fonts, SkeletonBlock } from "@/shared/ui";
-import { getFilterCardViewModel } from "../model/getFilterCardViewModel";
+import { Button, colors, fonts, SkeletonBlock } from "@/shared/ui";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 import { FloatingActionButton } from "./FloatingActionButton";
 
 const SKELETON_CARDS = [1, 2, 3, 4];
+
+const getErrorCause = (error: unknown): string | undefined => {
+  if (!(error instanceof Error) || error.cause === undefined) {
+    return undefined;
+  }
+
+  return error.cause instanceof Error
+    ? error.cause.message
+    : String(error.cause);
+};
 
 export const WidgetListPage: FC = () => {
   const { signOut } = useSession();
@@ -17,6 +28,13 @@ export const WidgetListPage: FC = () => {
   const syncQuery = useTodoistSyncQuery();
 
   const isLoading = filtersQuery.isPending || syncQuery.isPending;
+
+  const refetchFilters = filtersQuery.refetch;
+  useFocusEffect(
+    useCallback(() => {
+      refetchFilters();
+    }, [refetchFilters]),
+  );
 
   const handleLogOut = () => {
     Alert.alert("Log out?", "You'll need to reconnect your Todoist account.", [
@@ -28,11 +46,13 @@ export const WidgetListPage: FC = () => {
   const viewModels =
     filtersQuery.data && syncQuery.data
       ? filtersQuery.data.map((filter) =>
-          getFilterCardViewModel(
-            filter,
-            syncQuery.data.tasks,
-            syncQuery.data.projects,
-          ),
+          getFilterCardViewModel({
+            filterId: filter.id,
+            filterTitle: filter.title,
+            query: filter.query,
+            tasks: syncQuery.data.tasks,
+            projects: syncQuery.data.projects,
+          }),
         )
       : [];
 
@@ -52,7 +72,21 @@ export const WidgetListPage: FC = () => {
         </Button>
       </View>
 
-      {isLoading ? (
+      {syncQuery.isError ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>
+            {syncQuery.error instanceof Error
+              ? syncQuery.error.message
+              : "Something went wrong while syncing with Todoist."}
+          </Text>
+          {getErrorCause(syncQuery.error) !== undefined && (
+            <Text style={styles.errorCause}>
+              {getErrorCause(syncQuery.error)}
+            </Text>
+          )}
+          <Button label="Try again" onPress={() => syncQuery.refetch()} />
+        </View>
+      ) : isLoading ? (
         <View style={styles.skeletonGrid}>
           {SKELETON_CARDS.map((id) => (
             <SkeletonBlock key={id} height={92} borderRadius={16} />
@@ -70,7 +104,7 @@ export const WidgetListPage: FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FEFDFC",
+    backgroundColor: colors.background,
   },
   header: {
     height: 48,
@@ -88,13 +122,13 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: "#DB4C3F",
+    backgroundColor: colors.primary,
     marginTop: -5, // visual correction for centering the header brand
   },
   headerTitle: {
     fontFamily: fonts.poppinsBold,
     fontSize: 21,
-    color: "#25221E",
+    color: colors.textPrimary,
   },
   logOutButton: {
     width: 36,
@@ -104,11 +138,30 @@ const styles = StyleSheet.create({
   logOutIcon: {
     fontFamily: fonts.poppinsSemiBold,
     fontSize: 18,
-    color: "#FFFFFF",
+    color: colors.surface,
   },
   skeletonGrid: {
     flex: 1,
     padding: 24,
     gap: 22,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+    gap: 12,
+  },
+  errorTitle: {
+    fontFamily: fonts.dmSansBold,
+    fontSize: 15,
+    color: colors.danger,
+    textAlign: "center",
+  },
+  errorCause: {
+    fontFamily: fonts.dmSansRegular,
+    fontSize: 13,
+    color: colors.textSecondary,
+    textAlign: "center",
+    marginBottom: 12,
   },
 });

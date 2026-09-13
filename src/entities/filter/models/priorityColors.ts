@@ -1,10 +1,11 @@
 import { Priority } from "@/entities/task";
+import { colors } from "@/shared/ui";
 
 export const PRIORITY_COLORS: Record<Priority, string> = {
-  [Priority.URGENT]: "#D1453B",
-  [Priority.HIGH]: "#EB8909",
-  [Priority.MEDIUM]: "#246FE0",
-  [Priority.NORMAL]: "#E0E0E0",
+  [Priority.URGENT]: colors.danger,
+  [Priority.HIGH]: colors.warning,
+  [Priority.MEDIUM]: colors.info,
+  [Priority.NORMAL]: colors.neutral,
 };
 
 export const getCardPriority = (priorities: Priority[]): Priority =>

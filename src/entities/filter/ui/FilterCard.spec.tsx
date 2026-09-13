@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react-native";
-import type { FilterCardViewModel } from "../model/getFilterCardViewModel";
+import { fireEvent, render, screen } from "@testing-library/react-native";
+import type { FilterCardViewModel } from "../models/getFilterCardViewModel";
 import { FilterCard } from "./FilterCard";
 
 const baseViewModel: FilterCardViewModel = {
@@ -55,5 +55,14 @@ describe("FilterCard", () => {
     await render(<FilterCard viewModel={baseViewModel} />);
 
     expect(screen.getByText("Groceries")).toBeTruthy();
+  });
+
+  it("calls onPress when tapped, if provided", async () => {
+    const onPress = jest.fn();
+    await render(<FilterCard viewModel={baseViewModel} onPress={onPress} />);
+
+    fireEvent.press(screen.getByRole("button", { name: "Groceries" }));
+
+    expect(onPress).toHaveBeenCalled();
   });
 });

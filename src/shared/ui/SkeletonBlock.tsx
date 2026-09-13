@@ -7,6 +7,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { colors } from "./colors";
 
 type SkeletonBlockProps = {
   width?: DimensionValue;
@@ -33,7 +34,7 @@ export const SkeletonBlock: FC<SkeletonBlockProps> = ({
   return (
     <Animated.View
       style={[
-        { width, height, borderRadius, backgroundColor: "#E6E1DB" },
+        { width, height, borderRadius, backgroundColor: colors.divider },
         animatedStyle,
         style,
       ]}
