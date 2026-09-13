@@ -1,4 +1,5 @@
 export {
+  clearTasks,
   createTasksTable,
   deleteCheckedTasks,
   deleteTasks,

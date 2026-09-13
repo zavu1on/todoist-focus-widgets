@@ -1,3 +1,4 @@
+export { clearLabels } from "./clearLabels";
 export { createLabelsTable } from "./createLabelsTable";
 export { deleteLabels } from "./deleteLabels";
 export { getLabels } from "./getLabels";

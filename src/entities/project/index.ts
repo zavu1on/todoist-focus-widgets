@@ -1,4 +1,5 @@
 export {
+  clearProjects,
   createProjectsTable,
   deleteProjects,
   getProjects,

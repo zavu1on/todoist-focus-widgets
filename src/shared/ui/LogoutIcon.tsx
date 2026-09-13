@@ -34,6 +34,6 @@ export const LogoutIcon: FC<LogoutIconProps> = ({ size = 24, color }) => (
 const styles = StyleSheet.create({
   logoutIcon: {
     position: "relative",
-    right: 1,
+    right: 1, // offset for visual centering of the icon
   },
 });

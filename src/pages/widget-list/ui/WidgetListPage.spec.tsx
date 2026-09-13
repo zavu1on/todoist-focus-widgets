@@ -6,7 +6,10 @@ import {
   useFiltersQuery,
 } from "@/entities/filter";
 import { Project } from "@/entities/project";
-import { useTodoistSyncQuery } from "@/features/todoist-sync";
+import {
+  useFullTodoistReloadMutation,
+  useTodoistSyncQuery,
+} from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
 import { WidgetListPage } from "./WidgetListPage";
 
@@ -26,6 +29,7 @@ jest.mock("@/entities/filter", () => ({
 
 jest.mock("@/features/todoist-sync", () => ({
   useTodoistSyncQuery: jest.fn(),
+  useFullTodoistReloadMutation: jest.fn(),
 }));
 
 jest.mock("@/shared/model", () => ({
@@ -34,6 +38,8 @@ jest.mock("@/shared/model", () => ({
 
 const mockedUseFiltersQuery = useFiltersQuery as jest.Mock;
 const mockedUseTodoistSyncQuery = useTodoistSyncQuery as jest.Mock;
+const mockedUseFullTodoistReloadMutation =
+  useFullTodoistReloadMutation as jest.Mock;
 const mockedUseSession = useSession as jest.Mock;
 const mockedUseDeleteFilterMutation = useDeleteFilterMutation as jest.Mock;
 
@@ -54,6 +60,10 @@ beforeEach(() => {
   mockedUseSession.mockReturnValue({ signOut: jest.fn() });
   mockedUseDeleteFilterMutation.mockReturnValue({
     mutate: jest.fn(),
+    isPending: false,
+  });
+  mockedUseFullTodoistReloadMutation.mockReturnValue({
+    mutateAsync: jest.fn().mockResolvedValue(undefined),
     isPending: false,
   });
 });
@@ -87,13 +97,43 @@ describe("WidgetListPage", () => {
     });
     mockedUseTodoistSyncQuery.mockReturnValue({
       isPending: false,
+      isFetching: false,
       data: { tasks: [], projects: [inboxProject], labels: [] },
+      refetch: jest.fn(),
     });
 
     await render(<WidgetListPage />);
 
     expect(screen.getByText("Groceries")).toBeTruthy();
     expect(screen.getByText("All clear.")).toBeTruthy();
+  });
+
+  it("wipes local Todoist data and refetches it when pressing Refresh", async () => {
+    const mutateAsync = jest.fn().mockResolvedValue(undefined);
+    const refetch = jest.fn();
+    mockedUseFullTodoistReloadMutation.mockReturnValue({
+      mutateAsync,
+      isPending: false,
+    });
+    mockedUseFiltersQuery.mockReturnValue({
+      isPending: false,
+      data: [],
+      refetch: jest.fn(),
+    });
+    mockedUseTodoistSyncQuery.mockReturnValue({
+      isPending: false,
+      isFetching: false,
+      data: { tasks: [], projects: [], labels: [] },
+      refetch,
+    });
+
+    await render(<WidgetListPage />);
+    fireEvent.press(screen.getByRole("button", { name: "Refresh" }));
+
+    await Promise.resolve();
+
+    expect(mutateAsync).toHaveBeenCalled();
+    expect(refetch).toHaveBeenCalled();
   });
 
   describe("sync error", () => {

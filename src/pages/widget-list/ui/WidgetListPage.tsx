@@ -4,18 +4,15 @@ import { useCallback } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getFilterCardViewModel, useFiltersQuery } from "@/entities/filter";
-import { useTodoistSyncQuery } from "@/features/todoist-sync";
-import { useSession } from "@/shared/model";
 import {
-  Button,
-  colors,
-  fonts,
-  LogoutIcon,
-  ReloadIcon,
-  SkeletonBlock,
-} from "@/shared/ui";
+  useFullTodoistReloadMutation,
+  useTodoistSyncQuery,
+} from "@/features/todoist-sync";
+import { useSession } from "@/shared/model";
+import { Button, colors, fonts, LogoutIcon, SkeletonBlock } from "@/shared/ui";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 import { FloatingActionButton } from "./FloatingActionButton";
+import { SpinningReloadIcon } from "./SpinningReloadIcon";
 
 const SKELETON_CARDS = [1, 2, 3, 4];
 
@@ -33,8 +30,16 @@ export const WidgetListPage: FC = () => {
   const { signOut } = useSession();
   const filtersQuery = useFiltersQuery();
   const syncQuery = useTodoistSyncQuery();
+  const fullReloadMutation = useFullTodoistReloadMutation();
 
-  const isLoading = filtersQuery.isPending || syncQuery.isPending;
+  const isReloading = fullReloadMutation.isPending || syncQuery.isFetching;
+  const isLoading =
+    filtersQuery.isPending || syncQuery.isPending || isReloading;
+
+  const handleReload = async () => {
+    await fullReloadMutation.mutateAsync();
+    syncQuery.refetch();
+  };
 
   const refetchFilters = filtersQuery.refetch;
   useFocusEffect(
@@ -71,9 +76,14 @@ export const WidgetListPage: FC = () => {
         <Button
           style={styles.refreshButton}
           accessibilityLabel="Refresh"
-          onPress={() => {}}
+          disabled={isReloading}
+          onPress={handleReload}
         >
-          <ReloadIcon size={18} color={colors.iconMuted} />
+          <SpinningReloadIcon
+            size={18}
+            color={colors.iconMuted}
+            spinning={isReloading}
+          />
         </Button>
         <Button
           style={styles.logOutButton}

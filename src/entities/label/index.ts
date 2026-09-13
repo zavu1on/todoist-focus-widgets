@@ -1,4 +1,5 @@
 export {
+  clearLabels,
   createLabelsTable,
   deleteLabels,
   getLabels,

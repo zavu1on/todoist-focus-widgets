@@ -1,3 +1,4 @@
+export { clearTasks } from "./clearTasks";
 export { createTasksTable } from "./createTasksTable";
 export { deleteCheckedTasks } from "./deleteCheckedTasks";
 export { deleteTasks } from "./deleteTasks";
