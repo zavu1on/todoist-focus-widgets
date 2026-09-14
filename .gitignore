@@ -44,6 +44,3 @@ example
 # generated native folders
 /ios
 /android
-
-# Storybook
-storybook-static/
