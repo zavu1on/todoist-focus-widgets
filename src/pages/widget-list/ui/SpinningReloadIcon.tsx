@@ -26,7 +26,7 @@ export const SpinningReloadIcon: FC<SpinningReloadIconProps> = ({
   useEffect(() => {
     if (spinning) {
       rotation.value = withRepeat(
-        withTiming(360, { duration: 800, easing: Easing.linear }),
+        withTiming(-360, { duration: 800, easing: Easing.linear }),
         -1,
       );
     } else {

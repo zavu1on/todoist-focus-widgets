@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { CreateFilterInput } from "@/entities/filter";
 import {
@@ -55,38 +55,42 @@ export const UpsertFilterFormStepTwo: FC<UpsertFilterFormStepTwoProps> = ({
 
       <Text style={styles.title}>Name it and check it</Text>
 
-      <View style={styles.fieldGroup}>
-        <Text style={styles.label}>Name this widget</Text>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              accessibilityLabel="Widget name"
-              style={styles.input}
-              placeholder="Deep work"
-              placeholderTextColor={colors.textMuted}
-              value={value}
-              onChangeText={onChange}
-            />
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.fieldGroup}>
+          <Text style={styles.label}>Name this widget</Text>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                accessibilityLabel="Widget name"
+                style={styles.input}
+                placeholder="Deep work"
+                placeholderTextColor={colors.textMuted}
+                value={value}
+                onChangeText={onChange}
+              />
+            )}
+          />
+          <Text style={styles.helperText}>
+            Only shown in the hub — never on the widget itself.
+          </Text>
+          {errors.title?.message && (
+            <Text style={styles.errorText}>{errors.title.message}</Text>
           )}
-        />
-        <Text style={styles.helperText}>
-          Only shown in the hub — never on the widget itself.
-        </Text>
-        {errors.title?.message && (
-          <Text style={styles.errorText}>{errors.title.message}</Text>
-        )}
-      </View>
-
-      <View style={styles.previewGroup}>
-        <Text style={styles.previewLabel}>Actual size preview</Text>
-        <View style={styles.previewFrame}>
-          <FilterCard viewModel={previewViewModel} />
         </View>
-      </View>
 
-      <View style={styles.spacer} />
+        <View style={styles.previewGroup}>
+          <Text style={styles.previewLabel}>Actual size preview</Text>
+          <View style={styles.previewFrame}>
+            <FilterCard viewModel={previewViewModel} />
+          </View>
+        </View>
+      </ScrollView>
 
       <View style={styles.footer}>
         <Button
@@ -141,6 +145,12 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 24,
   },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
   fieldGroup: {
     paddingHorizontal: 24,
     gap: 8,
@@ -187,9 +197,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 18,
     backgroundColor: "#EFECE8",
-  },
-  spacer: {
-    flex: 1,
   },
   footer: {
     paddingHorizontal: 24,
