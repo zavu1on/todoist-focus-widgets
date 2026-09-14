@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -103,12 +104,25 @@ describe("UpsertFilterForm", () => {
     await render(<UpsertFilterForm onSaved={onSaved} onCancel={onCancel} />);
     expect(screen.getByText("Step 1 of 2")).toBeTruthy();
 
-    fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    });
     expect(await screen.findByText("Step 2 of 2")).toBeTruthy();
 
     // Back navigation from step two returns to step one instead of leaving the form.
+    const triggerBeforeRemoveInAct = async () => {
+      let captured: ReturnType<typeof triggerBeforeRemove> | undefined;
+      await act(async () => {
+        captured = triggerBeforeRemove();
+      });
+      if (!captured) {
+        throw new Error("beforeRemove handler was not captured");
+      }
+      return captured;
+    };
+
     timingSpy.mockClear();
-    let { preventDefault } = triggerBeforeRemove();
+    let { preventDefault } = await triggerBeforeRemoveInAct();
     expect(preventDefault).toHaveBeenCalled();
     expect(timingSpy).toHaveBeenCalledWith(
       expect.anything(),
@@ -116,14 +130,20 @@ describe("UpsertFilterForm", () => {
     );
 
     // Re-enter step two, make the form dirty, and go back to step one manually.
-    fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    });
     expect(await screen.findByText("Step 2 of 2")).toBeTruthy();
-    fireEvent.changeText(screen.getByLabelText("Widget name"), "Deep work");
-    fireEvent.press(screen.getByRole("button", { name: "Back" }));
+    await act(async () => {
+      fireEvent.changeText(screen.getByLabelText("Widget name"), "Deep work");
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Back" }));
+    });
     expect(await screen.findByText("Step 1 of 2")).toBeTruthy();
 
     // Leaving a dirty form now asks for confirmation.
-    const dirtyRemoveAttempt = triggerBeforeRemove();
+    const dirtyRemoveAttempt = await triggerBeforeRemoveInAct();
     preventDefault = dirtyRemoveAttempt.preventDefault;
     const { action } = dirtyRemoveAttempt;
     expect(preventDefault).toHaveBeenCalled();
@@ -131,14 +151,22 @@ describe("UpsertFilterForm", () => {
     const discardOption = alertSpy.mock.calls[0][2]?.find(
       (button) => button.text === "Discard",
     );
-    discardOption?.onPress?.();
+    await act(async () => {
+      discardOption?.onPress?.();
+    });
     expect(navigation.dispatch).toHaveBeenCalledWith(action);
     alertSpy.mockClear();
 
     // Submitting on step two creates the filter and leaves without a confirmation.
-    fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Continue" }));
+    });
     expect(await screen.findByText("Step 2 of 2")).toBeTruthy();
-    fireEvent.press(screen.getByRole("button", { name: "Add to Home Screen" }));
+    await act(async () => {
+      fireEvent.press(
+        screen.getByRole("button", { name: "Add to Home Screen" }),
+      );
+    });
 
     await waitFor(() =>
       expect(createMutate).toHaveBeenCalledWith(
@@ -148,7 +176,7 @@ describe("UpsertFilterForm", () => {
     );
     expect(onSaved).toHaveBeenCalled();
 
-    ({ preventDefault } = triggerBeforeRemove());
+    ({ preventDefault } = await triggerBeforeRemoveInAct());
     expect(preventDefault).not.toHaveBeenCalled();
     expect(alertSpy).not.toHaveBeenCalled();
 

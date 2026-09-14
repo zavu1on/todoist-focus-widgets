@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import type { FC } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { Text } from "react-native";
@@ -62,12 +62,18 @@ describe("LabelsComboboxField", () => {
   it("selects a label from the opened list and removes it via its chip", async () => {
     await render(<Harness />);
 
-    fireEvent.press(screen.getByRole("button", { name: "Add label" }));
-    fireEvent.press(await screen.findByText("errands"));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Add label" }));
+    });
+    await act(async () => {
+      fireEvent.press(await screen.findByText("errands"));
+    });
 
     expect(await screen.findByText("Current: errands")).toBeTruthy();
 
-    fireEvent.press(screen.getByLabelText("Remove errands"));
+    await act(async () => {
+      fireEvent.press(screen.getByLabelText("Remove errands"));
+    });
 
     expect(await screen.findByText("Current:")).toBeTruthy();
   });

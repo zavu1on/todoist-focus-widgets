@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { Pressable, Text } from "react-native";
 import { deleteAccessToken, getAccessToken } from "@/shared/api";
 import { SessionProvider, useSession } from "./SessionContext";
@@ -57,7 +57,9 @@ describe("SessionContext", () => {
     );
 
     await screen.findByText("signed-in");
-    fireEvent.press(screen.getByRole("button", { name: "Log out" }));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Log out" }));
+    });
 
     expect(await screen.findByText("signed-out")).toBeTruthy();
     expect(mockedDeleteAccessToken).toHaveBeenCalled();

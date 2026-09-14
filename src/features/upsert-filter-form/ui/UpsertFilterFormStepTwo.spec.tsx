@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import type { FC } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
@@ -50,7 +50,11 @@ describe("UpsertFilterFormStepTwo", () => {
 
     await render(<Harness />);
 
-    fireEvent.press(screen.getByRole("button", { name: "Add to Home Screen" }));
+    await act(async () => {
+      fireEvent.press(
+        screen.getByRole("button", { name: "Add to Home Screen" }),
+      );
+    });
 
     expect(
       await screen.findByText("Filter title can't be empty."),

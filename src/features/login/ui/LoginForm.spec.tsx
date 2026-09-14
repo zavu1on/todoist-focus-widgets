@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -49,18 +50,28 @@ describe("LoginForm", () => {
 
     await render(<LoginForm />);
 
-    fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    });
     expect(await screen.findByText("Access token is empty")).toBeTruthy();
     expect(mutate).not.toHaveBeenCalled();
 
-    fireEvent.changeText(screen.getByLabelText("API token"), "short-token");
-    fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    await act(async () => {
+      fireEvent.changeText(screen.getByLabelText("API token"), "short-token");
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    });
     expect(await screen.findByText("Access token is too short")).toBeTruthy();
     expect(mutate).not.toHaveBeenCalled();
 
     const validToken = "a".repeat(40);
-    fireEvent.changeText(screen.getByLabelText("API token"), validToken);
-    fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    await act(async () => {
+      fireEvent.changeText(screen.getByLabelText("API token"), validToken);
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByRole("button", { name: "Connect" }));
+    });
     await waitFor(() => expect(mutate).toHaveBeenCalledWith(validToken));
   });
 });
