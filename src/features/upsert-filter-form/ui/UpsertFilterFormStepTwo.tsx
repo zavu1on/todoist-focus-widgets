@@ -15,6 +15,7 @@ type UpsertFilterFormStepTwoProps = {
   onBack: () => void;
   onSubmit: () => void;
   onPlaceOnHomeScreen: () => void;
+  onDelete?: () => void;
   isSubmitting: boolean;
 };
 
@@ -22,6 +23,7 @@ export const UpsertFilterFormStepTwo: FC<UpsertFilterFormStepTwoProps> = ({
   onBack,
   onSubmit,
   onPlaceOnHomeScreen,
+  onDelete,
   isSubmitting,
 }) => {
   const {
@@ -102,6 +104,13 @@ export const UpsertFilterFormStepTwo: FC<UpsertFilterFormStepTwoProps> = ({
         <Text style={styles.footerCaption}>
           Next: long-press your home screen → Widgets → Focus Widget
         </Text>
+        {onDelete !== undefined && (
+          <Button
+            label="Delete filter"
+            style={styles.deleteButton}
+            onPress={onDelete}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -208,5 +217,8 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     color: colors.textSecondary,
     textAlign: "center",
+  },
+  deleteButton: {
+    backgroundColor: colors.danger,
   },
 });

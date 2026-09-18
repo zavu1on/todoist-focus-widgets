@@ -1,9 +1,13 @@
 export { createFilter } from "./createFilter";
 export { createFiltersTable } from "./createFiltersTable";
+export { createPendingWidgetFilterTable } from "./createPendingWidgetFilterTable";
 export { deleteFilter } from "./deleteFilter";
+export { getAndClearPendingWidgetFilterId } from "./getAndClearPendingWidgetFilterId";
 export { getFilters } from "./getFilters";
+export { setPendingWidgetFilterId } from "./setPendingWidgetFilterId";
 export { updateFilter } from "./updateFilter";
 export { useCreateFilterMutation } from "./useCreateFilterMutation";
 export { useDeleteFilterMutation } from "./useDeleteFilterMutation";
 export { useFiltersQuery } from "./useFiltersQuery";
 export { useUpdateFilterMutation } from "./useUpdateFilterMutation";
+export { widgetTaskHandler } from "./widgetTaskHandler";

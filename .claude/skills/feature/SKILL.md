@@ -49,7 +49,7 @@ For each plan point, in order:
    ```bash
    bunx biome check --write .
    bunx tsc --noEmit
-   bunx jest
+   bunx jest --runInBand
    ```
 4. If a check fails for a reason unrelated to this point's change (pre-existing failure), report it instead of silently working around it, and ask how to proceed
 

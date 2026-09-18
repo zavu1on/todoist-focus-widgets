@@ -16,3 +16,21 @@ jest.mock("@doist/todoist-sdk", () => ({
 jest.mock("react-native-reanimated", () =>
   require("react-native-reanimated/mock"),
 );
+
+// react-native-android-widget's native module isn't registered under Jest
+// (TurboModuleRegistry.getEnforcing throws at import time), and every widget
+// tree it renders is just JSX describing RemoteViews, never actually mounted.
+jest.mock("react-native-android-widget", () => ({
+  FlexWidget: () => null,
+  TextWidget: () => null,
+  IconWidget: () => null,
+  ImageWidget: () => null,
+  ListWidget: () => null,
+  OverlapWidget: () => null,
+  SvgWidget: () => null,
+  registerWidgetTaskHandler: jest.fn(),
+  requestPinWidget: jest.fn().mockResolvedValue(true),
+  requestWidgetUpdate: jest.fn(),
+  requestWidgetUpdateById: jest.fn(),
+  getWidgetInfo: jest.fn().mockResolvedValue([]),
+}));

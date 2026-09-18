@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -16,8 +17,10 @@ import {
   createFilterInputSchema,
   type Filter,
   useCreateFilterMutation,
+  useDeleteFilterMutation,
   useUpdateFilterMutation,
 } from "@/entities/filter";
+import { pinFilterWidget } from "@/features/pin-filter-widget";
 import { colors } from "@/shared/ui";
 import { getDefaultFilterFormValues } from "../model/getDefaultFilterFormValues";
 import { UpsertFilterFormStepOne } from "./UpsertFilterFormStepOne";
@@ -38,6 +41,7 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
   onCancel,
 }) => {
   const navigation = useNavigation();
+  const db = useSQLiteContext();
   const form = useForm<CreateFilterInput>({
     resolver: zodResolver(createFilterInputSchema),
     defaultValues: getDefaultFilterFormValues(initialFilter),
@@ -54,6 +58,7 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
 
   const createMutation = useCreateFilterMutation();
   const updateMutation = useUpdateFilterMutation();
+  const deleteMutation = useDeleteFilterMutation();
 
   const goToStep = (nextStep: 0 | 1) => {
     stepRef.current = nextStep;
@@ -77,6 +82,49 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
       );
     }
   });
+
+  const handlePlaceOnHomeScreen = form.handleSubmit((values) => {
+    hasSavedRef.current = true;
+
+    if (initialFilter === undefined) {
+      createMutation.mutate(values, {
+        onSuccess: (createdFilter) => {
+          pinFilterWidget(db, createdFilter.id).then(onSaved);
+        },
+      });
+    } else {
+      updateMutation.mutate(
+        { filter: initialFilter, input: values },
+        {
+          onSuccess: () => {
+            pinFilterWidget(db, initialFilter.id).then(onSaved);
+          },
+        },
+      );
+    }
+  });
+
+  const handleDelete = () => {
+    if (initialFilter === undefined) {
+      return;
+    }
+
+    Alert.alert(
+      "Delete this filter?",
+      `"${initialFilter.title}" will be removed from your widgets.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            hasSavedRef.current = true;
+            deleteMutation.mutate(initialFilter.id, { onSuccess: onSaved });
+          },
+        },
+      ],
+    );
+  };
 
   useEffect(
     () =>
@@ -149,7 +197,8 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
             <UpsertFilterFormStepTwo
               onBack={() => goToStep(0)}
               onSubmit={handleSave}
-              onPlaceOnHomeScreen={() => {}}
+              onPlaceOnHomeScreen={handlePlaceOnHomeScreen}
+              onDelete={initialFilter === undefined ? undefined : handleDelete}
               isSubmitting={
                 createMutation.isPending || updateMutation.isPending
               }

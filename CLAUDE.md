@@ -33,14 +33,14 @@ bunx expo start               # dev-сервер
 bunx biome check .            # линт + проверка форматирования
 bunx biome check --write .    # линт + форматирование с автофиксом
 bunx tsc --noEmit             # typecheck
-bunx jest                     # все тесты
-bunx jest path/to/file.spec.ts   # один файл тестов
-bunx jest -t "название теста"    # тесты по названию
+bunx jest --runInBand                     # все тесты
+bunx jest --runInBand path/to/file.spec.ts   # один файл тестов
+bunx jest --runInBand -t "название теста"    # тесты по названию
 bunx expo-doctor              # диагностика зависимостей (обязательно при их изменении)
 bunx expo install --fix       # правка несовместимых версий пакетов
 ```
 
-Перед завершением задачи — `bunx tsc --noEmit`, `bunx biome check --write .`, `bunx jest` (порядок и полный SDLC — в разделе «SDLC» [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md)).
+Перед завершением задачи — `bunx tsc --noEmit`, `bunx biome check --write .`, `bunx jest --runInBand` (порядок и полный SDLC — в разделе «SDLC» [`docs/CODE_STYLE_GUIDE.md`](docs/CODE_STYLE_GUIDE.md)).
 
 ## Архитектура
 

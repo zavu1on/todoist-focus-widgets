@@ -6,9 +6,11 @@ import {
   waitFor,
 } from "@testing-library/react-native";
 import { useNavigation } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { Alert, Animated } from "react-native";
 import {
   useCreateFilterMutation,
+  useDeleteFilterMutation,
   useUpdateFilterMutation,
 } from "@/entities/filter";
 import { useTodoistSyncQuery } from "@/features/todoist-sync";
@@ -18,6 +20,7 @@ jest.mock("@/entities/filter", () => ({
   ...jest.requireActual("@/entities/filter"),
   useCreateFilterMutation: jest.fn(),
   useUpdateFilterMutation: jest.fn(),
+  useDeleteFilterMutation: jest.fn(),
 }));
 
 jest.mock("@/features/todoist-sync", () => ({
@@ -28,10 +31,16 @@ jest.mock("expo-router", () => ({
   useNavigation: jest.fn(),
 }));
 
+jest.mock("expo-sqlite", () => ({
+  useSQLiteContext: jest.fn(),
+}));
+
 const mockedUseCreateFilterMutation = useCreateFilterMutation as jest.Mock;
 const mockedUseUpdateFilterMutation = useUpdateFilterMutation as jest.Mock;
+const mockedUseDeleteFilterMutation = useDeleteFilterMutation as jest.Mock;
 const mockedUseTodoistSyncQuery = useTodoistSyncQuery as jest.Mock;
 const mockedUseNavigation = useNavigation as jest.Mock;
+const mockedUseSQLiteContext = useSQLiteContext as jest.Mock;
 
 const setupNavigationMock = () => {
   let beforeRemoveHandler:
@@ -89,6 +98,11 @@ describe("UpsertFilterForm", () => {
       mutate: jest.fn(),
       isPending: false,
     });
+    mockedUseDeleteFilterMutation.mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+    });
+    mockedUseSQLiteContext.mockReturnValue({});
     const createMutate = jest.fn(
       (_input, options?: { onSuccess?: () => void }) => options?.onSuccess?.(),
     );

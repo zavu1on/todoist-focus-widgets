@@ -15,7 +15,7 @@ jest.mock("@/features/todoist-sync", () => ({
 
 const mockedUseTodoistSyncQuery = useTodoistSyncQuery as jest.Mock;
 
-const Harness: FC = () => {
+const Harness: FC<{ onDelete?: () => void }> = ({ onDelete }) => {
   const form = useForm<CreateFilterInput>({
     resolver: zodResolver(createFilterInputSchema),
     defaultValues: {
@@ -36,6 +36,7 @@ const Harness: FC = () => {
         onBack={jest.fn()}
         onSubmit={form.handleSubmit(jest.fn())}
         onPlaceOnHomeScreen={jest.fn()}
+        onDelete={onDelete}
         isSubmitting={false}
       />
     </FormProvider>
@@ -59,5 +60,27 @@ describe("UpsertFilterFormStepTwo", () => {
     expect(
       await screen.findByText("Filter title can't be empty."),
     ).toBeTruthy();
+  });
+
+  it("hides the delete button when onDelete is not provided", async () => {
+    mockedUseTodoistSyncQuery.mockReturnValue({
+      data: { tasks: [], projects: [], labels: [] },
+    });
+
+    await render(<Harness />);
+
+    expect(screen.queryByRole("button", { name: "Delete filter" })).toBeNull();
+  });
+
+  it("shows and triggers the delete button when onDelete is provided", async () => {
+    mockedUseTodoistSyncQuery.mockReturnValue({
+      data: { tasks: [], projects: [], labels: [] },
+    });
+    const onDelete = jest.fn();
+
+    await render(<Harness onDelete={onDelete} />);
+    fireEvent.press(screen.getByRole("button", { name: "Delete filter" }));
+
+    expect(onDelete).toHaveBeenCalled();
   });
 });

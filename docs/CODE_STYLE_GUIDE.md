@@ -244,7 +244,7 @@ export { SessionProvider, useSession } from "./SessionContext";
 2. Добавление / актуализация unit-тестов
 3. Проверь, нет ли висящих ссылок, нужно ли обновить документацию (`docs/README.md`, `CLAUDE.md`) — по «Правилу актуализации» из [`CLAUDE.md`](../CLAUDE.md)
 4. `bunx tsc --noEmit` и `bunx biome check --write .`
-5. `bunx jest`
+5. `bunx jest --runInBand`
 6. Ожидание ревью от человека
 7. `/git-commit`
 

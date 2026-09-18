@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.todoistfocuswidgets"
     },
     "web": {
       "output": "static",
@@ -34,7 +35,29 @@
         }
       ],
       "expo-secure-store",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "react-native-android-widget",
+        {
+          "fonts": [
+            "./node_modules/@expo-google-fonts/poppins/700Bold/Poppins_700Bold.ttf",
+            "./node_modules/@expo-google-fonts/dm-sans/400Regular/DMSans_400Regular.ttf"
+          ],
+          "widgets": [
+            {
+              "name": "Pin",
+              "label": "Focus Widget",
+              "description": "Shows the first task matching a filter.",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "none",
+              "previewImage": "./assets/images/icon.png"
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

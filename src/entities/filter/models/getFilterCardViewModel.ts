@@ -7,6 +7,7 @@ export type FilterCardViewModel = {
   filterId: number;
   filterTitle: string;
   taskTitle: string | null;
+  taskUrl: string | null;
   remainingCount: number;
   priorityColor: string;
   projectName: string | null;
@@ -38,6 +39,7 @@ export const getFilterCardViewModel = ({
     filterId,
     filterTitle,
     taskTitle: firstTask?.content ?? null,
+    taskUrl: firstTask?.url ?? null,
     remainingCount: Math.max(matchingTasks.length - 1, 0),
     priorityColor: PRIORITY_COLORS[getCardPriority(query.priorities)],
     projectName: project?.name ?? null,

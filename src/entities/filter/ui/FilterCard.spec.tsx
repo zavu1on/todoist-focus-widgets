@@ -6,6 +6,7 @@ const baseViewModel: FilterCardViewModel = {
   filterId: 1,
   filterTitle: "Groceries",
   taskTitle: "Buy oat milk",
+  taskUrl: "https://todoist.com/showTask?id=1",
   remainingCount: 3,
   priorityColor: "#D1453B",
   projectName: "Errands",

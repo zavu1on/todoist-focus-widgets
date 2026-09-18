@@ -1,39 +1,41 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { router } from "expo-router";
-import { Alert } from "react-native";
-import {
-  type FilterCardViewModel,
-  useDeleteFilterMutation,
-} from "@/entities/filter";
+import { useSQLiteContext } from "expo-sqlite";
+import type { FilterCardViewModel } from "@/entities/filter";
+import { pinFilterWidget } from "@/features/pin-filter-widget";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 
 jest.mock("expo-router", () => ({
   router: { push: jest.fn() },
 }));
 
-jest.mock("@/entities/filter", () => ({
-  ...jest.requireActual("@/entities/filter"),
-  useDeleteFilterMutation: jest.fn(),
+jest.mock("expo-sqlite", () => ({
+  useSQLiteContext: jest.fn(),
+}));
+
+jest.mock("@/features/pin-filter-widget", () => ({
+  pinFilterWidget: jest.fn(),
 }));
 
 const mockedRouter = router as unknown as { push: jest.Mock };
-const mockedUseDeleteFilterMutation = useDeleteFilterMutation as jest.Mock;
+const mockedUseSQLiteContext = useSQLiteContext as jest.Mock;
+const mockedPinFilterWidget = pinFilterWidget as jest.Mock;
 
 const buildViewModel = (id: number): FilterCardViewModel => ({
   filterId: id,
   filterTitle: `Filter ${id}`,
   taskTitle: `Task ${id}`,
+  taskUrl: null,
   remainingCount: 0,
   priorityColor: "#E0E0E0",
   projectName: null,
   projectColor: null,
 });
 
+const fakeDb = {};
+
 beforeEach(() => {
-  mockedUseDeleteFilterMutation.mockReturnValue({
-    mutate: jest.fn(),
-    isPending: false,
-  });
+  mockedUseSQLiteContext.mockReturnValue(fakeDb);
 });
 
 afterEach(() => {
@@ -41,6 +43,14 @@ afterEach(() => {
 });
 
 describe("FilterCardsGrid", () => {
+  it("shows an empty state message when there are no filters", async () => {
+    await render(<FilterCardsGrid viewModels={[]} />);
+
+    expect(
+      screen.getByText("No filters yet. Tap the + button to create one."),
+    ).toBeTruthy();
+  });
+
   it("renders one card per view model", async () => {
     await render(
       <FilterCardsGrid viewModels={[buildViewModel(1), buildViewModel(2)]} />,
@@ -61,47 +71,11 @@ describe("FilterCardsGrid", () => {
     });
   });
 
-  describe("delete confirmation", () => {
-    it("asks for confirmation instead of deleting immediately", async () => {
-      const mutate = jest.fn();
-      mockedUseDeleteFilterMutation.mockReturnValue({
-        mutate,
-        isPending: false,
-      });
-      const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("pins the filter's widget to the home screen on long press", async () => {
+    await render(<FilterCardsGrid viewModels={[buildViewModel(1)]} />);
 
-      await render(<FilterCardsGrid viewModels={[buildViewModel(1)]} />);
-      fireEvent(screen.getByRole("button", { name: "Filter 1" }), "longPress");
+    fireEvent(screen.getByRole("button", { name: "Filter 1" }), "longPress");
 
-      expect(alertSpy).toHaveBeenCalledWith(
-        "Delete this filter?",
-        expect.any(String),
-        expect.any(Array),
-      );
-      expect(mutate).not.toHaveBeenCalled();
-
-      alertSpy.mockRestore();
-    });
-
-    it("deletes the filter only when the destructive action is confirmed", async () => {
-      const mutate = jest.fn();
-      mockedUseDeleteFilterMutation.mockReturnValue({
-        mutate,
-        isPending: false,
-      });
-      jest
-        .spyOn(Alert, "alert")
-        .mockImplementation((_title, _message, buttons) => {
-          const confirmButton = buttons?.find(
-            (button) => button.text === "Delete",
-          );
-          confirmButton?.onPress?.();
-        });
-
-      await render(<FilterCardsGrid viewModels={[buildViewModel(1)]} />);
-      fireEvent(screen.getByRole("button", { name: "Filter 1" }), "longPress");
-
-      expect(mutate).toHaveBeenCalledWith(1);
-    });
+    expect(mockedPinFilterWidget).toHaveBeenCalledWith(fakeDb, 1);
   });
 });

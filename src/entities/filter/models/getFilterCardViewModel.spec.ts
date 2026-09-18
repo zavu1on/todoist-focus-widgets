@@ -51,6 +51,19 @@ describe("getFilterCardViewModel", () => {
 
     expect(viewModel.taskTitle).toBe("Buy milk");
     expect(viewModel.remainingCount).toBe(0);
+    expect(viewModel.taskUrl).toBe("https://todoist.com/showTask?id=1");
+  });
+
+  it("has no task url when nothing matches", () => {
+    const viewModel = getFilterCardViewModel({
+      filterId: 1,
+      filterTitle: "Groceries",
+      query: buildQuery(),
+      tasks: [],
+      projects: [inboxProject],
+    });
+
+    expect(viewModel.taskUrl).toBeNull();
   });
 
   it("counts every other matching task as remaining", () => {

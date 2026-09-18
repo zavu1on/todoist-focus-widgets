@@ -1,9 +1,13 @@
 import { Redirect, Stack } from "expo-router";
 import { type SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
-import { createFiltersTable } from "@/entities/filter";
+import {
+  createFiltersTable,
+  createPendingWidgetFilterTable,
+} from "@/entities/filter";
 import { createLabelsTable } from "@/entities/label";
 import { createProjectsTable } from "@/entities/project";
 import { createTasksTable } from "@/entities/task";
+import { DATABASE_NAME } from "@/shared/api";
 import { useSession } from "@/shared/model";
 import { colors } from "@/shared/ui";
 
@@ -12,6 +16,7 @@ const createDBMigrations = async (db: SQLiteDatabase) => {
 
   // filter entity
   await createFiltersTable(db);
+  await createPendingWidgetFilterTable(db);
 
   // todoist entities
   await createProjectsTable(db);
@@ -31,7 +36,7 @@ export default function AppLayout() {
   }
 
   return (
-    <SQLiteProvider databaseName="focus-widgets.db" onInit={createDBMigrations}>
+    <SQLiteProvider databaseName={DATABASE_NAME} onInit={createDBMigrations}>
       <Stack
         screenOptions={{
           headerShown: false,
