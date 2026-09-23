@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { useSQLiteContext } from "expo-sqlite";
 import { Alert } from "react-native";
 import {
   Filter,
@@ -7,6 +6,7 @@ import {
   useFiltersQuery,
 } from "@/entities/filter";
 import { Project } from "@/entities/project";
+import { usePinFilterWidgetMutation } from "@/features/pin-filter-widget";
 import {
   useFullTodoistReloadMutation,
   useTodoistSyncQuery,
@@ -33,12 +33,12 @@ jest.mock("@/features/todoist-sync", () => ({
   useFullTodoistReloadMutation: jest.fn(),
 }));
 
-jest.mock("@/shared/model", () => ({
-  useSession: jest.fn(),
+jest.mock("@/features/pin-filter-widget", () => ({
+  usePinFilterWidgetMutation: jest.fn(),
 }));
 
-jest.mock("expo-sqlite", () => ({
-  useSQLiteContext: jest.fn(),
+jest.mock("@/shared/model", () => ({
+  useSession: jest.fn(),
 }));
 
 const mockedUseFiltersQuery = useFiltersQuery as jest.Mock;
@@ -47,7 +47,8 @@ const mockedUseFullTodoistReloadMutation =
   useFullTodoistReloadMutation as jest.Mock;
 const mockedUseSession = useSession as jest.Mock;
 const mockedUseDeleteFilterMutation = useDeleteFilterMutation as jest.Mock;
-const mockedUseSQLiteContext = useSQLiteContext as jest.Mock;
+const mockedUsePinFilterWidgetMutation =
+  usePinFilterWidgetMutation as jest.Mock;
 
 const inboxProject = Project.create({ id: "p1", name: "Inbox", color: "red" });
 
@@ -63,8 +64,8 @@ const filterFixture = Filter.create({
 });
 
 beforeEach(() => {
-  mockedUseSQLiteContext.mockReturnValue({});
   mockedUseSession.mockReturnValue({ signOut: jest.fn() });
+  mockedUsePinFilterWidgetMutation.mockReturnValue({ mutate: jest.fn() });
   mockedUseDeleteFilterMutation.mockReturnValue({
     mutate: jest.fn(),
     isPending: false,

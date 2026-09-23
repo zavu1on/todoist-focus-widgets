@@ -1,17 +1,20 @@
 export {
+  addPendingWidgetFilterId,
   createFilter,
   createFiltersTable,
   createPendingWidgetFilterTable,
+  createWidgetFilterTable,
   deleteFilter,
-  getAndClearPendingWidgetFilterId,
+  deleteWidgetFilterId,
   getFilters,
-  setPendingWidgetFilterId,
+  getWidgetFilterIds,
+  popPendingWidgetFilterId,
   updateFilter,
+  upsertWidgetFilterId,
   useCreateFilterMutation,
   useDeleteFilterMutation,
   useFiltersQuery,
   useUpdateFilterMutation,
-  widgetTaskHandler,
 } from "./api";
 export {
   type CreateFilterInput,

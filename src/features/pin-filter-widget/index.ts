@@ -1,1 +1,1 @@
-export { pinFilterWidget } from "./api";
+export { usePinFilterWidgetMutation } from "./api";

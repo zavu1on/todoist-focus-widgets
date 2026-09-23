@@ -1,25 +1,20 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import type { FilterCardViewModel } from "@/entities/filter";
-import { pinFilterWidget } from "@/features/pin-filter-widget";
+import { usePinFilterWidgetMutation } from "@/features/pin-filter-widget";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 
 jest.mock("expo-router", () => ({
   router: { push: jest.fn() },
 }));
 
-jest.mock("expo-sqlite", () => ({
-  useSQLiteContext: jest.fn(),
-}));
-
 jest.mock("@/features/pin-filter-widget", () => ({
-  pinFilterWidget: jest.fn(),
+  usePinFilterWidgetMutation: jest.fn(),
 }));
 
 const mockedRouter = router as unknown as { push: jest.Mock };
-const mockedUseSQLiteContext = useSQLiteContext as jest.Mock;
-const mockedPinFilterWidget = pinFilterWidget as jest.Mock;
+const mockedUsePinFilterWidgetMutation =
+  usePinFilterWidgetMutation as jest.Mock;
 
 const buildViewModel = (id: number): FilterCardViewModel => ({
   filterId: id,
@@ -32,10 +27,10 @@ const buildViewModel = (id: number): FilterCardViewModel => ({
   projectColor: null,
 });
 
-const fakeDb = {};
+const pinMutate = jest.fn();
 
 beforeEach(() => {
-  mockedUseSQLiteContext.mockReturnValue(fakeDb);
+  mockedUsePinFilterWidgetMutation.mockReturnValue({ mutate: pinMutate });
 });
 
 afterEach(() => {
@@ -76,6 +71,6 @@ describe("FilterCardsGrid", () => {
 
     fireEvent(screen.getByRole("button", { name: "Filter 1" }), "longPress");
 
-    expect(mockedPinFilterWidget).toHaveBeenCalledWith(fakeDb, 1);
+    expect(pinMutate).toHaveBeenCalledWith(1);
   });
 });

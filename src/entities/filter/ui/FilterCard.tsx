@@ -34,22 +34,24 @@ export const FilterCard: FC<FilterCardProps> = ({
         <Text style={styles.taskTitle} numberOfLines={2}>
           {viewModel.taskTitle ?? "All clear."}
         </Text>
-        {viewModel.projectName !== null && (
-          <View style={styles.projectRow}>
-            <View
-              style={[
-                styles.projectDot,
-                {
-                  backgroundColor:
-                    viewModel.projectColor ?? colors.textSecondary,
-                },
-              ]}
-            />
-            <Text style={styles.projectName} numberOfLines={1}>
-              {viewModel.projectName}
-            </Text>
-          </View>
-        )}
+        <View
+          style={[
+            styles.projectRow,
+            viewModel.projectName === null && styles.hidden,
+          ]}
+        >
+          <View
+            style={[
+              styles.projectDot,
+              {
+                backgroundColor: viewModel.projectColor ?? colors.textSecondary,
+              },
+            ]}
+          />
+          <Text style={styles.projectName} numberOfLines={1}>
+            {viewModel.projectName ?? ""}
+          </Text>
+        </View>
       </View>
     </>
   );
@@ -106,6 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: fonts.poppinsBold,
     fontSize: 14,
+    minHeight: 22,
     color: colors.textPrimary,
   },
   badge: {
@@ -130,6 +133,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.dmSansRegular,
     fontSize: 15,
     lineHeight: 20,
+    minHeight: 40,
     color: colors.textPrimary,
   },
   projectRow: {
@@ -137,6 +141,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     minWidth: 0,
+  },
+  hidden: {
+    opacity: 0,
   },
   projectDot: {
     width: 7,

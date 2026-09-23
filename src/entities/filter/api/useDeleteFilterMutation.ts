@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSQLiteContext } from "expo-sqlite";
+import { useDatabase } from "@/shared/model";
 import { filtersListQueryKey } from "../models/queryKeys";
 import { deleteFilter } from "./deleteFilter";
 
 export const useDeleteFilterMutation = () => {
-  const db = useSQLiteContext();
+  const db = useDatabase();
   const queryClient = useQueryClient();
 
   return useMutation({

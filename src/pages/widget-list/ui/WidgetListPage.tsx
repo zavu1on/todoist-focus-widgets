@@ -9,7 +9,14 @@ import {
   useTodoistSyncQuery,
 } from "@/features/todoist-sync";
 import { useSession } from "@/shared/model";
-import { Button, colors, fonts, LogoutIcon, SkeletonBlock } from "@/shared/ui";
+import {
+  Button,
+  colors,
+  ErrorScreen,
+  fonts,
+  LogoutIcon,
+  SkeletonBlock,
+} from "@/shared/ui";
 import { FilterCardsGrid } from "./FilterCardsGrid";
 import { FloatingActionButton } from "./FloatingActionButton";
 import { SpinningReloadIcon } from "./SpinningReloadIcon";
@@ -95,19 +102,15 @@ export const WidgetListPage: FC = () => {
       </View>
 
       {syncQuery.isError ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>
-            {syncQuery.error instanceof Error
+        <ErrorScreen
+          title={
+            syncQuery.error instanceof Error
               ? syncQuery.error.message
-              : "Something went wrong while syncing with Todoist."}
-          </Text>
-          {getErrorCause(syncQuery.error) !== undefined && (
-            <Text style={styles.errorCause}>
-              {getErrorCause(syncQuery.error)}
-            </Text>
-          )}
-          <Button label="Try again" onPress={() => syncQuery.refetch()} />
-        </View>
+              : "Something went wrong while syncing with Todoist."
+          }
+          details={getErrorCause(syncQuery.error)}
+          onRetry={() => syncQuery.refetch()}
+        />
       ) : isLoading ? (
         <View style={styles.skeletonGrid}>
           {SKELETON_CARDS.map((id) => (
@@ -163,24 +166,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     gap: 14,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 24,
-    gap: 12,
-  },
-  errorTitle: {
-    fontFamily: fonts.dmSansBold,
-    fontSize: 15,
-    color: colors.danger,
-    textAlign: "center",
-  },
-  errorCause: {
-    fontFamily: fonts.dmSansRegular,
-    fontSize: 13,
-    color: colors.textSecondary,
-    textAlign: "center",
-    marginBottom: 12,
   },
 });

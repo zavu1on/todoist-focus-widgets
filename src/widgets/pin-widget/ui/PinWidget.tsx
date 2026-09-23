@@ -2,16 +2,43 @@
 
 import type { FC } from "react";
 import { FlexWidget, SvgWidget, TextWidget } from "react-native-android-widget";
+import type { FilterCardViewModel } from "@/entities/filter";
 import { colors, fonts } from "@/shared/ui";
-import type { FilterCardViewModel } from "../models/getFilterCardViewModel";
 
-type PinWidgetProps = {
-  viewModel: FilterCardViewModel;
-};
+type PinWidgetProps =
+  | { viewModel: FilterCardViewModel; errorMessage?: undefined }
+  | { viewModel?: undefined; errorMessage: string };
 
 const asHexColor = (value: string) => value as `#${string}`;
 
-export const PinWidget: FC<PinWidgetProps> = ({ viewModel }) => {
+export const PinWidget: FC<PinWidgetProps> = ({ viewModel, errorMessage }) => {
+  if (errorMessage !== undefined) {
+    return (
+      <FlexWidget
+        style={{
+          height: "match_parent",
+          width: "match_parent",
+          flexDirection: "row",
+          alignItems: "center",
+          borderRadius: 20,
+          backgroundColor: colors.surface,
+          padding: 16,
+        }}
+      >
+        <TextWidget
+          text={errorMessage}
+          maxLines={4}
+          truncate="END"
+          style={{
+            fontFamily: fonts.dmSansRegular,
+            fontSize: 14,
+            color: colors.textSecondary,
+          }}
+        />
+      </FlexWidget>
+    );
+  }
+
   const clickProps =
     viewModel.taskUrl !== null
       ? {
@@ -64,6 +91,7 @@ export const PinWidget: FC<PinWidgetProps> = ({ viewModel }) => {
             />
           </FlexWidget>
           <FlexWidget
+            clickAction="RELOAD"
             style={{
               width: 32,
               height: 32,

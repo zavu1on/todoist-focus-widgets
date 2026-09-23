@@ -53,7 +53,8 @@
               "targetCellWidth": 2,
               "targetCellHeight": 2,
               "resizeMode": "none",
-              "previewImage": "./assets/images/icon.png"
+              "previewImage": "./assets/images/icon.png",
+              "updatePeriodMillis": 1800000
             }
           ]
         }

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSQLiteContext } from "expo-sqlite";
+import { useDatabase } from "@/shared/model";
 import type { CreateFilterInput, Filter } from "../models/filter";
 import { filtersListQueryKey } from "../models/queryKeys";
 import { updateFilter } from "./updateFilter";
@@ -10,7 +10,7 @@ type UpdateFilterMutationInput = {
 };
 
 export const useUpdateFilterMutation = () => {
-  const db = useSQLiteContext();
+  const db = useDatabase();
   const queryClient = useQueryClient();
 
   return useMutation({

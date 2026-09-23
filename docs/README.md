@@ -19,7 +19,8 @@ docs/
 ├── CODE_STYLE_GUIDE.md   — руководство по архитектуре (FSD) и оформлению кода: технологический стек, naming, роутинг Expo Router, лучшие практики TanStack Query и React Hook Form + Zod, SDLC
 └── decisions/            — ADR (Architecture Decision Records)
     ├── README.md         — паттерн, процесс и шаблон ADR
-    └── 00-use-adr.md     — использование паттерна ADR
+    ├── 00-use-adr.md     — использование паттерна ADR
+    └── 01-single-sqlite-connection.md — инвариант одного SQLite-соединения на JS-рантайм, устраняющий use-after-free нативного хэндла
 ```
 
 

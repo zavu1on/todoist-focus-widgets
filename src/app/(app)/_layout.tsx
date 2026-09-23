@@ -1,27 +1,26 @@
 import { Redirect, Stack } from "expo-router";
-import { type SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
-import {
-  createFiltersTable,
-  createPendingWidgetFilterTable,
-} from "@/entities/filter";
-import { createLabelsTable } from "@/entities/label";
-import { createProjectsTable } from "@/entities/project";
-import { createTasksTable } from "@/entities/task";
-import { DATABASE_NAME } from "@/shared/api";
-import { useSession } from "@/shared/model";
+import { getDatabase } from "@/features/database";
+import { DatabaseProvider, useSession } from "@/shared/model";
 import { colors } from "@/shared/ui";
+import { useRevalidateWidgetsOnForeground } from "@/widgets/pin-widget";
 
-const createDBMigrations = async (db: SQLiteDatabase) => {
-  await db.execAsync("PRAGMA foreign_keys = ON;");
+const AppStack = () => {
+  useRevalidateWidgetsOnForeground();
 
-  // filter entity
-  await createFiltersTable(db);
-  await createPendingWidgetFilterTable(db);
-
-  // todoist entities
-  await createProjectsTable(db);
-  await createLabelsTable(db);
-  await createTasksTable(db);
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+        // No animation: expo-router unmounts a popped screen before its pop transition finishes.
+        // It's a conscious crutch. Animation is implemented in UpsertFilterForm component.
+        animation: "none",
+      }}
+    >
+      <Stack.Screen name="filter/new" />
+      <Stack.Screen name="filter/[id]" />
+    </Stack>
+  );
 };
 
 export default function AppLayout() {
@@ -36,19 +35,8 @@ export default function AppLayout() {
   }
 
   return (
-    <SQLiteProvider databaseName={DATABASE_NAME} onInit={createDBMigrations}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.background },
-          // No animation: expo-router unmounts a popped screen before its pop transition finishes.
-          // It's a conscious crutch. Animation is implemented in UpsertFilterForm component.
-          animation: "none",
-        }}
-      >
-        <Stack.Screen name="filter/new" />
-        <Stack.Screen name="filter/[id]" />
-      </Stack>
-    </SQLiteProvider>
+    <DatabaseProvider getDatabase={getDatabase}>
+      <AppStack />
+    </DatabaseProvider>
   );
 }

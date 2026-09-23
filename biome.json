@@ -18,7 +18,22 @@
       "preset": "recommended",
       "style": {
         "useImportType": "warn",
-        "useExportType": "warn"
+        "useExportType": "warn",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "expo-sqlite": {
+                "message": "Use getDatabase() from @/features/database (composition roots only) or useDatabase() from @/shared/model instead of opening a second SQLite connection.",
+                "importNames": [
+                  "openDatabaseAsync",
+                  "SQLiteProvider",
+                  "useSQLiteContext"
+                ]
+              }
+            }
+          }
+        }
       }
     }
   },

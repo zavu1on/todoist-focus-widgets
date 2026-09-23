@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -20,7 +19,7 @@ import {
   useDeleteFilterMutation,
   useUpdateFilterMutation,
 } from "@/entities/filter";
-import { pinFilterWidget } from "@/features/pin-filter-widget";
+import { usePinFilterWidgetMutation } from "@/features/pin-filter-widget";
 import { colors } from "@/shared/ui";
 import { getDefaultFilterFormValues } from "../model/getDefaultFilterFormValues";
 import { UpsertFilterFormStepOne } from "./UpsertFilterFormStepOne";
@@ -41,7 +40,6 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
   onCancel,
 }) => {
   const navigation = useNavigation();
-  const db = useSQLiteContext();
   const form = useForm<CreateFilterInput>({
     resolver: zodResolver(createFilterInputSchema),
     defaultValues: getDefaultFilterFormValues(initialFilter),
@@ -59,6 +57,7 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
   const createMutation = useCreateFilterMutation();
   const updateMutation = useUpdateFilterMutation();
   const deleteMutation = useDeleteFilterMutation();
+  const pinMutation = usePinFilterWidgetMutation();
 
   const goToStep = (nextStep: 0 | 1) => {
     stepRef.current = nextStep;
@@ -89,7 +88,7 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
     if (initialFilter === undefined) {
       createMutation.mutate(values, {
         onSuccess: (createdFilter) => {
-          pinFilterWidget(db, createdFilter.id).then(onSaved);
+          pinMutation.mutate(createdFilter.id, { onSuccess: onSaved });
         },
       });
     } else {
@@ -97,7 +96,7 @@ export const UpsertFilterForm: FC<UpsertFilterFormProps> = ({
         { filter: initialFilter, input: values },
         {
           onSuccess: () => {
-            pinFilterWidget(db, initialFilter.id).then(onSaved);
+            pinMutation.mutate(initialFilter.id, { onSuccess: onSaved });
           },
         },
       );

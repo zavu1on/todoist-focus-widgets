@@ -1,5 +1,4 @@
 import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import type { FC } from "react";
 import {
   FlatList,
@@ -9,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { FilterCard, type FilterCardViewModel } from "@/entities/filter";
-import { pinFilterWidget } from "@/features/pin-filter-widget";
+import { usePinFilterWidgetMutation } from "@/features/pin-filter-widget";
 import { colors, fonts } from "@/shared/ui";
 
 type FilterCardsGridProps = {
@@ -24,7 +23,7 @@ export const FilterCardsGrid: FC<FilterCardsGridProps> = ({ viewModels }) => {
   const { width } = useWindowDimensions();
   const cardWidth =
     (width - CONTENT_PADDING * 2 - COLUMN_GAP * (COLUMNS - 1)) / COLUMNS;
-  const db = useSQLiteContext();
+  const pinMutation = usePinFilterWidgetMutation();
 
   const renderItem = ({ item }: { item: FilterCardViewModel }) => (
     <View style={[styles.cell, { width: cardWidth }]}>
@@ -36,7 +35,7 @@ export const FilterCardsGrid: FC<FilterCardsGridProps> = ({ viewModels }) => {
             params: { id: String(item.filterId) },
           })
         }
-        onLongPress={() => pinFilterWidget(db, item.filterId)}
+        onLongPress={() => pinMutation.mutate(item.filterId)}
       />
     </View>
   );

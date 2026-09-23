@@ -3,10 +3,10 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useSQLiteContext } from "expo-sqlite";
 import { clearLabels } from "@/entities/label";
 import { clearProjects } from "@/entities/project";
 import { clearTasks, setSyncToken } from "@/entities/task";
+import { useDatabase } from "@/shared/model";
 import { todoistSyncQueryKey } from "../model/queryKeys";
 
 /**
@@ -15,7 +15,7 @@ import { todoistSyncQueryKey } from "../model/queryKeys";
  * cleared before projects since `tasks.project_id` references `projects.id`.
  */
 export const useFullTodoistReloadMutation = (): UseMutationResult<void> => {
-  const db = useSQLiteContext();
+  const db = useDatabase();
   const queryClient = useQueryClient();
 
   return useMutation({
