@@ -17,6 +17,8 @@ docs/
 ├── TODOIST_SYNC_API.md   — ресёрч Todoist Sync API: sync_token, resource_types, commands, доступ через @doist/todoist-sdk, применение для обновления данных виджетов
 ├── REACT_NATIVE_ANDROID_WIDGET.md — ресёрч react-native-android-widget: архитектура рендера, регистрация провайдера, task handler и события жизненного цикла, обновление без пересоздания, клики, ограничения
 ├── CODE_STYLE_GUIDE.md   — руководство по архитектуре (FSD) и оформлению кода: технологический стек, naming, роутинг Expo Router, лучшие практики TanStack Query и React Hook Form + Zod, SDLC
+├── assets/               — изображения для документации
+│   └── preview.png       — превью экрана списка виджетов для корневого README.md
 └── decisions/            — ADR (Architecture Decision Records)
     ├── README.md         — паттерн, процесс и шаблон ADR
     ├── 00-use-adr.md     — использование паттерна ADR

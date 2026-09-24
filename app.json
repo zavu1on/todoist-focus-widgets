@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "todoist-focus-widgets",
+    "name": "Focus Widgets",
     "slug": "todoist-focus-widgets",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "todoistfocuswidgets",
+    "scheme": "todoist-focus-widgets",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,7 +18,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.todoistfocuswidgets"
+      "package": "com.zavu1on.todoistfocuswidgets",
+      "versionCode": 1
     },
     "web": {
       "output": "static",
@@ -29,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#DB4C3F",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
@@ -53,7 +54,7 @@
               "targetCellWidth": 2,
               "targetCellHeight": 2,
               "resizeMode": "none",
-              "previewImage": "./assets/images/icon.png",
+              "previewImage": "./assets/images/widget-pin-preview.png",
               "updatePeriodMillis": 1800000
             }
           ]
