@@ -68,6 +68,33 @@ On first launch the app asks for a Todoist API token: *Todoist → avatar → Se
 | `bun run lint` / `bun run format` | Biome lint / format |
 | `bunx expo-doctor` | check dependency compatibility |
 
+### Release build
+
+Release APKs are signed by the [`with-release-signing`](plugins/with-release-signing.js) config plugin with your own key; without it the release build fails instead of falling back to the public debug key. Generate the key once and keep it with its password outside the repo — losing it means users can't update the app:
+
+```bash
+keytool -genkeypair -v -storetype PKCS12 -keystore ~/keys/focus-widgets.keystore \
+  -alias focus-widgets -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Then add to `~/.gradle/gradle.properties`:
+
+```properties
+FOCUS_WIDGETS_STORE_FILE=/home/<user>/keys/focus-widgets.keystore
+FOCUS_WIDGETS_STORE_PASSWORD=...
+FOCUS_WIDGETS_KEY_ALIAS=focus-widgets
+FOCUS_WIDGETS_KEY_PASSWORD=...
+```
+
+Then build and install the release APK on a connected device:
+
+```bash
+source "$HOME/.sdkman/bin/sdkman-init.sh" && bunx expo prebuild -p android && \
+  ANDROID_HOME=~/Android/Sdk ANDROID_SDK_ROOT=~/Android/Sdk bunx expo run:android --variant release
+```
+
+`expo run:android` only prebuilds when `android/` is missing, so the explicit `prebuild` keeps `app.json` and plugin changes in the build. The APK lands in `android/app/build/outputs/apk/release/`.
+
 
 ## Roadmap
 
