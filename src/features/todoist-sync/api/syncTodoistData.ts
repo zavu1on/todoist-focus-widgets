@@ -32,11 +32,16 @@ type SyncedData = {
   labels: Label[];
 };
 
-const partitionByDeleted = <T extends { isDeleted?: boolean }>(
+const isRemoved = (item: { isDeleted?: boolean; checked?: boolean }) =>
+  item.isDeleted === true || item.checked === true;
+
+const partitionByDeleted = <
+  T extends { isDeleted?: boolean; checked?: boolean },
+>(
   items: T[],
 ): { toDelete: T[]; toUpsert: T[] } => ({
-  toDelete: items.filter((item) => item.isDeleted === true),
-  toUpsert: items.filter((item) => item.isDeleted !== true),
+  toDelete: items.filter(isRemoved),
+  toUpsert: items.filter((item) => !isRemoved(item)),
 });
 
 const requireProject = (

@@ -165,6 +165,26 @@ describe("syncTodoistData / delta sync", () => {
     expect(deleteTasks).toHaveBeenCalledWith(db, ["task-2"]);
   });
 
+  it("deletes completed tasks instead of upserting them", async () => {
+    mockedSyncTodoist.mockResolvedValue({
+      type: "delta",
+      syncToken: "token",
+      labels: [],
+      projects: [syncProjectFixture],
+      items: [
+        syncItemFixture,
+        { ...syncItemFixture, id: "task-2", checked: true },
+      ],
+    });
+
+    await syncTodoistData(db, "access-token");
+
+    expect(deleteTasks).toHaveBeenCalledWith(db, ["task-2"]);
+    expect(upsertTasks).toHaveBeenCalledWith(db, [
+      expect.objectContaining({ id: "task-1" }),
+    ]);
+  });
+
   it("only deletes, without upserting anything, when a delta contains solely removals", async () => {
     mockedSyncTodoist.mockResolvedValue({
       type: "delta",
